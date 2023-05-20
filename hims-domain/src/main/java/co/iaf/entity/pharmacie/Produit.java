@@ -14,10 +14,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import co.iaf.entity.enums.SensibiliteProduit;
+import co.iaf.entity.generator.ProduitRefGenerator;
 import co.iaf.entity.parametrage.Categorie;
 import co.iaf.entity.parametrage.UniteStockage;
 import co.iaf.entity.parametrage.UniteUtilisation;
@@ -34,9 +38,12 @@ import lombok.NoArgsConstructor;
 public class Produit {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "produit_ref")
+	@GenericGenerator(name = "produit_ref", strategy = "co.iaf.entity.generator.ProduitRefGenerator", parameters = {
+			@Parameter(name = ProduitRefGenerator.INCREMENT_PARAM, value = "1"),
+			@Parameter(name = ProduitRefGenerator.VALUE_PREFIX_PARAMETER, value = "PH"),
+			@Parameter(name = ProduitRefGenerator.NUMBER_FORMAT_PARAMETER, value = "%06d"), })
+	@Column(name = "ref_produit")
 	private String reference;
 
 	private String codebarre;

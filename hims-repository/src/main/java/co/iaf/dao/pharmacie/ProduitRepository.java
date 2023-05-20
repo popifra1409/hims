@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import co.iaf.entity.pharmacie.Produit;
 
-public interface ProduitRepository extends JpaRepository<Produit, Long> {
+public interface ProduitRepository extends JpaRepository<Produit, String> {
 
 	// get product by name containt
 	List<Produit> findByReferenceContainingOrDesignationContaining(String reference, String designation);
