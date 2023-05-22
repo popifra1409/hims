@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 
 import com.google.zxing.WriterException;
 
+import co.iaf.dao.exceptions.ResourceNotFoundException;
 import co.iaf.dao.pharmacie.ProduitRepository;
+import co.iaf.entity.identification.Patient;
 import co.iaf.entity.pharmacie.Produit;
 import co.iaf.utils.QrCodeGenerator;
 
@@ -34,28 +36,48 @@ public class ProduitServiceImpl implements ProduitService {
 		return this.produitRepo.save(prod);
 	}
 
-	@Override
-	public Produit updateProduit(String produitId, Produit produit) {
-		// TODO Auto-generated method stub
-		return null;
+	 @Override 
+	 public Produit updateProduit(String produitId, Produit produit) {
+			Produit prod = getProduitById(produitId);
+			prod.setDesignation(produit.getDesignation());
+			prod.setPrixUnit(produit.getPrixUnit());
+			prod.setSeuilReappro(produit.getSeuilReappro());
+			prod.setQteReappro(produit.getQteReappro());
+			prod.setStockAlerte(produit.getStockAlerte());
+			prod.setCoefUnite(produit.getCoefUnite());
+			prod.setDescription(produit.getDescription());
+			prod.setArchive(produit.isArchive());
+			prod.setDesactive(produit.isDesactive());
+			prod.setDiponible(produit.isDiponible());
+			prod.setGroupeProduit(produit.isGroupeProduit());
+			prod.setRefrigere(produit.isRefrigere());
+			prod.setSensibilite(produit.getSensibilite());
+			prod.setDci(produit.getDci());
+			prod.setNomCommercial(produit.getNomCommercial());
+			prod.setLiaisonPrestation(produit.isLiaisonPrestation());
+			prod.setPMUP(produit.isPMUP());
+			prod.setStockTheorique(produit.getStockTheorique());
+			
+
+			return this.produitRepo.save(prod);
+	 }
+	 
+	 @Override
+	 public void deleteProduit(Produit produit) { 
+		 this.produitRepo.delete(produit);
 	}
+	
 
 	@Override
-	public void deleteProduit(Produit produit) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public Produit getProduitById(String produitId) {
-		// TODO Auto-generated method stub
-		return null;
+	public Produit getProduitById(String reference) {
+		Produit produit = this.produitRepo.findById(reference)
+				.orElseThrow(() -> new ResourceNotFoundException("Produit", "Produit reference", 0));
+		return produit;
 	}
 
 	@Override
 	public List<Produit> getAllProduits() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.produitRepo.findAll();
 	}
 
 	@Override

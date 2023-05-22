@@ -10,12 +10,15 @@ public interface ProduitService {
 
 	// créer un produit
 	public Produit addNewProduit(Produit produit);
+	
+	// modifier un produit
 
-	// mis à jour Produit
-	public Produit updateProduit(String produitId, Produit produit);
+	 public Produit updateProduit(String produitId, Produit produit);
+	 
 
-	// delete Produit
-	public void deleteProduit(Produit produit);
+	// supprimer un produit par son id
+	 public void deleteProduit(Produit produit);
+	
 
 	// recupérer un Produit par son Id
 	public Produit getProduitById(String produitId);
