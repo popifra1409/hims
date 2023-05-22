@@ -30,8 +30,8 @@ public class LigneCommandeInterne {
 
 	// un enregistrement de commande interne concerne un produit
 	@ManyToOne
-	@MapsId("produitId")
-	@JoinColumn(name = "produit_id")
+	@MapsId("reference")
+	@JoinColumn(name = "reference")
 	private Produit produit;
 
 	// un enregistrement de commandeinterne concerne une commande interne

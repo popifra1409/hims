@@ -2,14 +2,8 @@ package co.iaf.service.pharmacie;
 
 import java.util.List;
 
-import javax.transaction.Transactional;
-
-import org.springframework.stereotype.Service;
-
 import co.iaf.entity.pharmacie.Produit;
 
-@Service
-@Transactional
 public interface ProduitService {
 
 	/* ============ GESTION DE PRODUITS ============= */
@@ -28,5 +22,8 @@ public interface ProduitService {
 
 	// recupérer la liste des tous les Produits
 	public List<Produit> getAllProduits();
+
+	// generate QRcode du produit
+	public String getQRCode(Produit produit);
 
 }

@@ -34,7 +34,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "reference")
 public class Produit {
 
 	@Id
@@ -46,6 +46,7 @@ public class Produit {
 	@Column(name = "ref_produit")
 	private String reference;
 
+	@Column(name = "qr_code", unique = true, length = 100000)
 	private String codebarre;
 
 	@Column(name = "nom_produit")

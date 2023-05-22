@@ -30,14 +30,14 @@ public class GroupeProduit {
 
 	// un groupe produit regroupe plusieurs lignes de produit principal
 	@ManyToOne
-	@MapsId("produitPrincipalId")
-	@JoinColumn(name = "produit_principal_id")
+	@MapsId("referencePrincipalId")
+	@JoinColumn(name = "reference_principal_id")
 	private Produit produitPrincipal;
 
 	// un groupe produit regroupe plusieurs lignes de produit secondaire
 	@ManyToOne
-	@MapsId("produitSecondaireId")
-	@JoinColumn(name = "produit_secondaire_id")
+	@MapsId("referenceSecondaireId")
+	@JoinColumn(name = "reference_secondaire_id")
 	private Produit produitSecondaire;
 
 	@Column(name = "quantite_produit")

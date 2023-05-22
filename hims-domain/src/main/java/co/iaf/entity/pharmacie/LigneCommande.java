@@ -30,8 +30,8 @@ public class LigneCommande {
 
 	// une ligne de commande concerne un produit
 	@ManyToOne
-	@MapsId("produitId")
-	@JoinColumn(name = "produit_id")
+	@MapsId("reference")
+	@JoinColumn(name = "reference")
 	private Produit produit;
 
 	// une ligne de commande concerne une commande
