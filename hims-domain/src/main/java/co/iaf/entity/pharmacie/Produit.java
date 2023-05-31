@@ -1,3 +1,4 @@
+
 package co.iaf.entity.pharmacie;
 
 import java.util.ArrayList;
@@ -45,9 +46,9 @@ public class Produit {
 			@Parameter(name = ProduitRefGenerator.NUMBER_FORMAT_PARAMETER, value = "%06d"), })
 	@Column(name = "ref_produit")
 	private String reference;
-
-	@Column(name = "qr_code", unique = true, length = 100000)
-	private String codebarre;
+	
+	@Column(name = "Qr_code")
+	private String qrcode;
 
 	@Column(name = "nom_produit")
 	private String designation;
@@ -63,7 +64,7 @@ public class Produit {
 
 	@Column(name = "stock_alerte")
 	private int stockAlerte;
-
+	
 	@ManyToOne
 	@JoinColumn(name = "unite_stockage_id")
 	private UniteStockage uniteStockage;

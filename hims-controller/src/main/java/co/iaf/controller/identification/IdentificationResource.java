@@ -1,5 +1,6 @@
 package co.iaf.controller.identification;
 
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,11 +16,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import co.iaf.entity.identification.GroupePatient;
 import co.iaf.entity.identification.InfosSup;
 import co.iaf.entity.identification.Patient;
+import co.iaf.entity.identification.QrCodePatient;
 import co.iaf.payloads.ApiResponse;
 import co.iaf.service.identification.IdentificationService;
 
@@ -132,12 +135,17 @@ public class IdentificationResource {
 		}
 	}
 
-	// rechercher un patient par son codebarre (A revoir)
-	@GetMapping(path = "/patients/barcode/{barcode}")
-	public ResponseEntity<?> getPatientByBarCode(@PathVariable String barcode) {
+	// rechercher un patient par son qr code (A revoir)
+	@GetMapping(path = "/patients/qrcode/{qrcodeId}")
+	public ResponseEntity<?> getPatientByQrCode(@PathVariable Long qrcodeId) {
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
+
 		try {
-			Patient patient = identificationService.getPatientByBarCode(barcode);
+			// on recupere le Qrcode correspondant au qrcodeId
+			QrCodePatient qrcodePatient = identificationService.getQrCodePatientById(qrcodeId);
+
+			Patient patient = identificationService.getPatientByQrCode(qrcodePatient);
+
 			map.put("status", 1);
 			map.put("data", patient);
 			return new ResponseEntity<>(map, HttpStatus.OK);
@@ -146,6 +154,28 @@ public class IdentificationResource {
 			map.put("status", 0);
 			map.put("message", new ApiResponse("Aucun patient trouvé", false));
 			return new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
+		}
+	}
+
+	// fusionner les patients
+	@PostMapping("/patients/fusionner/{patientId}")
+	public ResponseEntity<?> fusionnerPatients(@PathVariable("patientId") String patientPrincipalId,
+			@RequestBody List<String> patientIds) {
+		Map<String, Object> map = new LinkedHashMap<String, Object>();
+		try {
+			Patient patientPrincipal = identificationService.getPatientById(patientPrincipalId);
+			Collection<Patient> patientSecondaires = identificationService.getPatientsByIds(patientIds);
+
+			identificationService.mergePatient(patientPrincipal, patientSecondaires);
+
+			map.put("status", 1);
+			map.put("message", new ApiResponse("La fusion des patients a été effectuée avec succès !", true));
+			return new ResponseEntity<>(map, HttpStatus.OK);
+		} catch (Exception e) {
+			map.clear();
+			map.put("status", 0);
+			map.put("message", new ApiResponse("Une erreur s'est produite lors de la fusion des patients.", false));
+			return new ResponseEntity<>(map, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -232,22 +262,22 @@ public class IdentificationResource {
 			return new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
 		}
 	}
-	
+
 	/* ===================gestion groupe des patients ========================== */
 	// liste des groupes des patients ()
-		@GetMapping(path = "/groupepatients/all")
-		public ResponseEntity<?> listgroupepatients() {
-			Map<String, Object> map = new LinkedHashMap<String, Object>();
-			List<GroupePatient> listgroupepatients = identificationService.getAllGroupesPatients();
-			if (!listgroupepatients.isEmpty()) {
-				map.put("status", 1);
-				map.put("data", listgroupepatients);
-				return new ResponseEntity<>(map, HttpStatus.OK);
-			} else {
-				map.clear();
-				map.put("status", 0);
-				map.put("message", new ApiResponse("Aucune information trouvée", false));
-				return new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
-			}
+	@GetMapping(path = "/groupepatients/all")
+	public ResponseEntity<?> listgroupepatients() {
+		Map<String, Object> map = new LinkedHashMap<String, Object>();
+		List<GroupePatient> listgroupepatients = identificationService.getAllGroupesPatients();
+		if (!listgroupepatients.isEmpty()) {
+			map.put("status", 1);
+			map.put("data", listgroupepatients);
+			return new ResponseEntity<>(map, HttpStatus.OK);
+		} else {
+			map.clear();
+			map.put("status", 0);
+			map.put("message", new ApiResponse("Aucune information trouvée", false));
+			return new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
 		}
+	}
 }

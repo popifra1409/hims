@@ -2,7 +2,6 @@ package co.iaf.entity.pharmacie;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 import lombok.AllArgsConstructor;
@@ -15,9 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class GroupeProduitPk implements Serializable {
 
-	@Column(name = "produit_principal_id")
-	private Long produitPrincipalId;
+	private String referencePrincipalId;
 
-	@Column(name = "produit_secondaire_id")
-	private Long produitSecondaireId;
+	private String referenceSecondaireId;
 }

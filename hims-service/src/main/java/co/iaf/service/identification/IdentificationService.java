@@ -7,6 +7,7 @@ import co.iaf.entity.admission.PriseParametreSoin;
 import co.iaf.entity.identification.GroupePatient;
 import co.iaf.entity.identification.InfosSup;
 import co.iaf.entity.identification.Patient;
+import co.iaf.entity.identification.QrCodePatient;
 
 public interface IdentificationService {
 
@@ -23,23 +24,31 @@ public interface IdentificationService {
 	// recupérer un patient par son Id
 	public Patient getPatientById(String patientId);
 
+	// recuperer une collection de patients par leur ids
+	public Collection<Patient> getPatientsByIds(List<String> patientIds);
+
 	// recupérer la liste des tous les patients
 	public List<Patient> getAllPatients();
 
 	// fusionner les patients
-	public Patient mergePatient(String patientPrincipalid, Collection<Long> patientsSecondaireId);
+	public void mergePatient(Patient patientPrincipal, Collection<Patient> patientsSecondaires);
 
 	// Rechercher les patients par nom ou prénom
 	public List<Patient> getPatientsByLastNameOrFirstName(String lastname, String firstname);
 
-	// rechercher un patient par codebarre
-	public Patient getPatientByBarCode(String codebarre);
+	// recuperer un patient par son QrCode
+	public Patient getPatientByQrCode(QrCodePatient qrCodePatient);
 
-	// generer le QrCode du patient
-	public String getQRCode(Patient patient);
+	/* ============ Gestion du qrcode du patient ============= */
 
-	// generate Barcode du patient
-	public String getBarCode(Patient patient);
+	// créer un qr code d'un patient
+	public void addNewQrCodePatient(QrCodePatient qrCodePatient, String patientId);
+
+	// recupérer un qrcode par son ID
+	public QrCodePatient getQrCodePatientById(Long id);
+
+	// recupérer le Qrcode d'un patient
+	public QrCodePatient getQrCodeByPatient(Patient patient);
 
 	/* ============ Gestion des infos supplementaires du patient ============= */
 	// ajouter un info supplementaire au patient

@@ -16,4 +16,7 @@ public interface ProduitRepository extends JpaRepository<Produit, String> {
 	
 	//liste des produits archivés
 	List<Produit> findByIsArchiveTrue();
+	
+	//rechercher un produit par qrcode
+	Produit findByQrcode(String qrcode);
 }

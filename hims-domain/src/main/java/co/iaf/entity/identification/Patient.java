@@ -11,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -43,9 +44,6 @@ public class Patient {
 			@Parameter(name = PatientNipGenerator.NUMBER_FORMAT_PARAMETER, value = "%06d"), })
 	@Column(name = "nip")
 	private String patientId;
-
-	@Column(name = "code_barre", unique = true, length = 100000)
-	private String patientBarCode;
 
 	@Column(name = "empreinte_digitale", updatable = false, unique = true)
 	private String patientFingerPrints;
@@ -82,6 +80,10 @@ public class Patient {
 	private String telephone;
 
 	private String adresse;
+	
+	//un patient a un seuk qr code généré
+	@OneToOne(mappedBy = "patient")
+    private QrCodePatient qrCodePatient;
 
 	// Un patient peut avoir plusieurs informations supplémentaires
 	@OneToMany(mappedBy = "patient", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)

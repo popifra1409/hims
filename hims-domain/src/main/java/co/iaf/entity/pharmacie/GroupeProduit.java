@@ -1,7 +1,5 @@
 package co.iaf.entity.pharmacie;
 
-import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;

@@ -15,11 +15,12 @@ import co.iaf.dao.exceptions.ResourceNotFoundException;
 import co.iaf.dao.identification.GroupePatientRepository;
 import co.iaf.dao.identification.InfoSupRepository;
 import co.iaf.dao.identification.PatientRepository;
+import co.iaf.dao.identification.QrCodePatientRepository;
 import co.iaf.entity.admission.PriseParametreSoin;
 import co.iaf.entity.identification.GroupePatient;
 import co.iaf.entity.identification.InfosSup;
 import co.iaf.entity.identification.Patient;
-import co.iaf.utils.BarCodeGenerator;
+import co.iaf.entity.identification.QrCodePatient;
 import co.iaf.utils.QrCodeGenerator;
 
 @Service
@@ -30,13 +31,15 @@ public class IdentificationServiceImpl implements IdentificationService {
 
 	private PatientRepository patientRepo;
 	private InfoSupRepository infoSupRepo;
+	private QrCodePatientRepository qrCodePatientRepo;
 	private GroupePatientRepository groupepatientRepo;
 
 	public IdentificationServiceImpl(PatientRepository patientRepo, InfoSupRepository infoSupRepo,
-			GroupePatientRepository groupepatientRepo) {
+			QrCodePatientRepository qrCodePatientRepo, GroupePatientRepository groupepatientRepo) {
 		super();
 		this.patientRepo = patientRepo;
 		this.infoSupRepo = infoSupRepo;
+		this.qrCodePatientRepo = qrCodePatientRepo;
 		this.groupepatientRepo = groupepatientRepo;
 	}
 
@@ -45,12 +48,8 @@ public class IdentificationServiceImpl implements IdentificationService {
 		Collection<InfosSup> infosupp = patient.getInfosSup();
 
 		Patient pat = this.patientRepo.save(patient);
-		/*
-		 * // on genere le qrCode du patient String qrCodePatient = getQRCode(pat);
-		 * pat.setPatientBarCode(qrCodePatient);
-		 */
-		// on genere le barCode du patient
-		pat.setPatientBarCode(getQRCode(pat));
+		// on genere leQrCode du patient
+		addNewQrCodePatient(new QrCodePatient(), pat.getPatientId());
 
 		// informations supplémentaires
 		if (infosupp != null) {
@@ -58,7 +57,7 @@ public class IdentificationServiceImpl implements IdentificationService {
 				this.infoSupRepo.save(new InfosSup(null, info.getCle(), info.getValeur(), pat));
 			});
 		}
-		return this.patientRepo.save(pat);
+		return pat;
 	}
 
 	@Override
@@ -93,6 +92,11 @@ public class IdentificationServiceImpl implements IdentificationService {
 	}
 
 	@Override
+	public Collection<Patient> getPatientsByIds(List<String> patientIds) {
+		return patientRepo.findAllById(patientIds);
+	}
+
+	@Override
 	public List<Patient> getAllPatients() {
 		return this.patientRepo.findAll();
 	}
@@ -103,15 +107,13 @@ public class IdentificationServiceImpl implements IdentificationService {
 	}
 
 	@Override
-	public Patient getPatientByBarCode(String codebarre) {
-		return this.patientRepo.findByPatientBarCode(codebarre);
-	}
-
-	@Override
-	public Patient mergePatient(String patientPrincipalid, Collection<Long> patientsSecondaireIds) {
+	public void mergePatient(Patient patientPrincipal, Collection<Patient> patientsSecondaires) {
 		// on recupère le patient principal
-		Patient patientPrincipal = getPatientById(patientPrincipalid);
-		return null;
+		if (patientsSecondaires != null && !patientsSecondaires.isEmpty()) {
+			for (Patient patient : patientsSecondaires) {
+				fusionnerDeuxPatients(patientPrincipal, patient);
+			}
+		}
 	}
 
 	@Override
@@ -164,17 +166,60 @@ public class IdentificationServiceImpl implements IdentificationService {
 	}
 
 	@Override
+	public List<GroupePatient> getAllGroupesPatients() {
+		return this.groupepatientRepo.findAll();
+	}
+
+	@Override
+	public Patient getPatientByQrCode(QrCodePatient qrCodePatient) {
+		// recuperons le patient à partir du qrcode patient
+		return getPatientById(qrCodePatient.getPatient().getPatientId());
+	}
+
+	@Override
+	public void addNewQrCodePatient(QrCodePatient qrCodePatient, String patientId) {
+		// recupérer le patient dont on veut créer le qrcode
+		Patient patient = getPatientById(patientId);
+
+		// enregistrement du qrcode du patient
+		if (qrCodePatient != null && patient != null) {
+			// generation du QrCode du patient
+			String qrCodedata = getQRCode(patient);
+
+			qrCodePatient.setEncodedQRCode(qrCodedata);
+			qrCodePatient.setPatient(patient);
+
+			this.qrCodePatientRepo.save(qrCodePatient);
+		}
+
+	}
+
+	@Override
+	public QrCodePatient getQrCodePatientById(Long id) {
+		QrCodePatient qrCodePatient = this.qrCodePatientRepo.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("QRcode Patient", "QRcode Patient Id", 0));
+		return qrCodePatient;
+	}
+
+	@Override
+	public QrCodePatient getQrCodeByPatient(Patient patient) {
+		return qrCodePatientRepo.findByPatient(patient);
+	}
+
+	// méthode de génération de qr code
 	public String getQRCode(Patient patient) {
 		String qrCodeText = patient.getPatientId();
 		byte[] image = new byte[0];
+		// String filepath = "hims/resources/static/images/";
+
 		try {
 
 			// Generate and Return Qr Code in Byte Array
 			image = QrCodeGenerator.getQRCodeImage(qrCodeText, 250, 250);
 
 			// Generate and Save Qr Code Image in static/image folder
-			// QrCodeGenerator.generateQRCodeImage(qrCodeText, 250, 250, QR_CODE_IMAGE_PATH
-			// + qrCodeText + ".png");
+			// QrCodeGenerator.generateQRCodeImage(qrCodeText, 250, 250, filepath +
+			// "patient_" + qrCodeText + ".png");
 
 		} catch (WriterException | IOException e) {
 			e.printStackTrace();
@@ -186,22 +231,16 @@ public class IdentificationServiceImpl implements IdentificationService {
 		return qrcode;
 	}
 
-	@Override
-	public String getBarCode(Patient patient) {
-		String barCodeText = patient.getPatientId();
-		byte[] image = new byte[0];
-		// Generate and Return Bar Code in Byte Array
-		image = BarCodeGenerator.getBarCodeImage(barCodeText, 250, 250);
+	// méthode de fusion de deux patients
+	private void fusionnerDeuxPatients(Patient patientPrincipal, Patient patientDoublon) {
+		// Fusionner les informations supplémentaires
+		patientPrincipal.getInfosSup().addAll(patientDoublon.getInfosSup());
 
-		// Convert Byte Array into Base64 Encode String
-		String barcode = Base64.getEncoder().encodeToString(image);
-
-		return barcode;
+		// Supprimer le patient doublon
+		// on supprime d'abord le Qrcode du patient en doublon
+		QrCodePatient qrcodePatient = getQrCodeByPatient(patientDoublon);
+		qrCodePatientRepo.delete(qrcodePatient);
+		
+		patientRepo.delete(patientDoublon);
 	}
-
-	@Override
-	public List<GroupePatient> getAllGroupesPatients() {
-		return this.groupepatientRepo.findAll();
-	}
-
 }
