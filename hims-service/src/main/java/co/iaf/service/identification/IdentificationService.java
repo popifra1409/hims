@@ -64,7 +64,7 @@ public interface IdentificationService {
 	public void deleteInfosSup(InfosSup info);
 
 	// liste des infos supplémentaires d'un patient
-	public List<InfosSup> getAllInfosSup(Patient patient);
+	public List<InfosSup> getAllInfosSup(String patientId);
 
 	/* ============ Gestion des parametres de soin du patient ============= */
 	// ajouter une liste des parametres de soins à un patient

@@ -108,7 +108,6 @@ public class IdentificationServiceImpl implements IdentificationService {
 
 	@Override
 	public void mergePatient(Patient patientPrincipal, Collection<Patient> patientsSecondaires) {
-		// on recupère le patient principal
 		if (patientsSecondaires != null && !patientsSecondaires.isEmpty()) {
 			for (Patient patient : patientsSecondaires) {
 				fusionnerDeuxPatients(patientPrincipal, patient);
@@ -148,8 +147,8 @@ public class IdentificationServiceImpl implements IdentificationService {
 	}
 
 	@Override
-	public List<InfosSup> getAllInfosSup(Patient patient) {
-		return infoSupRepo.findByPatient(patient);
+	public List<InfosSup> getAllInfosSup(String patientId) {
+		return infoSupRepo.findByPatientPatientId(patientId);
 	}
 
 	@Override
@@ -233,14 +232,17 @@ public class IdentificationServiceImpl implements IdentificationService {
 
 	// méthode de fusion de deux patients
 	private void fusionnerDeuxPatients(Patient patientPrincipal, Patient patientDoublon) {
+
 		// Fusionner les informations supplémentaires
 		patientPrincipal.getInfosSup().addAll(patientDoublon.getInfosSup());
-
+		Patient patientFusion = addNewPatient(patientPrincipal);
+		
 		// Supprimer le patient doublon
 		// on supprime d'abord le Qrcode du patient en doublon
-		QrCodePatient qrcodePatient = getQrCodeByPatient(patientDoublon);
-		qrCodePatientRepo.delete(qrcodePatient);
-		
-		patientRepo.delete(patientDoublon);
+		  QrCodePatient qrcodePatient = getQrCodeByPatient(patientDoublon);
+		  qrCodePatientRepo.delete(qrcodePatient);
+		  
+		  patientRepo.delete(patientDoublon);
+		 
 	}
 }

@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import co.iaf.entity.identification.GroupePatient;
@@ -197,8 +196,7 @@ public class IdentificationResource {
 	@GetMapping("/infossup/patient/{patientId}")
 	public ResponseEntity<?> listinfosup(@PathVariable String patientId) {
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
-		Patient patient = identificationService.getPatientById(patientId);
-		List<InfosSup> listinfosup = identificationService.getAllInfosSup(patient);
+		List<InfosSup> listinfosup = identificationService.getAllInfosSup(patientId);
 		if (!listinfosup.isEmpty()) {
 			map.put("status", 1);
 			map.put("data", listinfosup);
