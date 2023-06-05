@@ -2,7 +2,9 @@ package co.iaf.service.parametrage;
 
 import java.util.List;
 
+import co.iaf.entity.parametrage.Domaine;
 import co.iaf.entity.parametrage.Services;
+import co.iaf.entity.parametrage.TypeDomaine;
 
 public interface ParametrageService {
 
@@ -22,4 +24,14 @@ public interface ParametrageService {
 
 	// recupérer tous les services
 	public List<Services> getAllServices();
+	
+	// créer un domaine
+	public Domaine addNewDomaine(Domaine domaine);
+	
+	// créer un type domaine
+	public TypeDomaine addNewTypeDomaine(TypeDomaine typeDomaine);
+	
+	
+	
+	
 }

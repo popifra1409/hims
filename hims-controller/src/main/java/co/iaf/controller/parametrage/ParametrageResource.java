@@ -16,7 +16,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import co.iaf.entity.identification.Patient;
+import co.iaf.entity.parametrage.Domaine;
 import co.iaf.entity.parametrage.Services;
+import co.iaf.entity.parametrage.TypeDomaine;
 import co.iaf.payloads.ApiResponse;
 import co.iaf.service.parametrage.ParametrageService;
 
@@ -94,4 +97,24 @@ public class ParametrageResource {
 			return new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
 		}
 	}
+	
+	// ajouter un nouveau Domaine 
+		@PostMapping(path = "/domaines/save")
+		public ResponseEntity<?> saveDomaine(@RequestBody Domaine domaine) {
+			Map<String, Object> map = new LinkedHashMap<String, Object>();
+			parametrageService.addNewDomaine(domaine);
+			map.put("status", 1);
+			map.put("message", new ApiResponse("Domaine créé avec succès !", true));
+			return new ResponseEntity<>(map, HttpStatus.CREATED);
+		}
+		
+		// ajouter un nouveau Domaine 
+				@PostMapping(path = "/types-domaines/save")
+				public ResponseEntity<?> saveTypeDomaine(@RequestBody TypeDomaine typeDomaine) {
+					Map<String, Object> map = new LinkedHashMap<String, Object>();
+					parametrageService.addNewTypeDomaine(typeDomaine);
+					map.put("status", 1);
+					map.put("message", new ApiResponse("Type Domaine créé avec succès !", true));
+					return new ResponseEntity<>(map, HttpStatus.CREATED);
+				}
 }
