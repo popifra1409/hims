@@ -278,4 +278,14 @@ public class IdentificationResource {
 			return new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
 		}
 	}
+	
+	//créer un nouveau groupe de patient
+	@PostMapping(path = "/groupepatients/save")
+	public ResponseEntity<?> saveGroupePatient(@RequestBody GroupePatient groupePatient) {
+		Map<String, Object> map = new LinkedHashMap<String, Object>();
+		identificationService.addNewGroupePatient(groupePatient);
+		map.put("status", 1);
+		map.put("message", new ApiResponse("Groupe Patient créé avec succès !", true));
+		return new ResponseEntity<>(map, HttpStatus.CREATED);
+	}
 }

@@ -18,6 +18,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import co.iaf.entity.admission.Hospitalisation;
@@ -91,14 +92,17 @@ public class Patient {
 
 	// Un patient peut avoir plusieurs prises de paramètres
 	@OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JsonIgnore
 	private Collection<PriseParametreSoin> prisesParametreSoin = new ArrayList<>();
 
 	// un patient peut subir plusieurq hospitalisations
 	@OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JsonIgnore
 	private Collection<Hospitalisation> hospitalisations = new ArrayList<>();
 
 	// un patient peut être présent dans plusieurs enregistrements de groupes pour
 	// des motifs différents
 	@OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JsonIgnore
 	private Collection<GroupeRegistration> groupesRegistration = new ArrayList<>();
 }

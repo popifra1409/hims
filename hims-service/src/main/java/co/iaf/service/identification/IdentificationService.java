@@ -67,6 +67,7 @@ public interface IdentificationService {
 	public List<InfosSup> getAllInfosSup(String patientId);
 
 	/* ============ Gestion des parametres de soin du patient ============= */
+
 	// ajouter une liste des parametres de soins à un patient
 	public Collection<PriseParametreSoin> addNewParamToPatient(Collection<PriseParametreSoin> params, String patientId);
 
@@ -74,7 +75,11 @@ public interface IdentificationService {
 	public List<PriseParametreSoin> getParamSoinsByPatient(String patientId);
 
 	/* ============ Gestion des groupes de patient ============= */
+
 	// recupérer la liste des tous les patients
 	public List<GroupePatient> getAllGroupesPatients();
+
+	// créer un nouveau groupe de patients
+	public GroupePatient addNewGroupePatient(GroupePatient groupePatient);
 
 }

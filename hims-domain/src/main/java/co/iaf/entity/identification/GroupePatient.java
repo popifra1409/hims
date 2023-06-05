@@ -36,6 +36,6 @@ public class GroupePatient {
 	private String nomGroupe;
 
 	// un groupe patient peut être présent dans plusieurs groupes d'enregistrement
-	@OneToMany(mappedBy = "groupe", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "groupePatient", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Collection<GroupeRegistration> groupesRegistration = new ArrayList<>();
 }

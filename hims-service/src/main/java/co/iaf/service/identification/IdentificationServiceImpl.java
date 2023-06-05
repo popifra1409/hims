@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -18,6 +19,7 @@ import co.iaf.dao.identification.PatientRepository;
 import co.iaf.dao.identification.QrCodePatientRepository;
 import co.iaf.entity.admission.PriseParametreSoin;
 import co.iaf.entity.identification.GroupePatient;
+import co.iaf.entity.identification.GroupeRegistration;
 import co.iaf.entity.identification.InfosSup;
 import co.iaf.entity.identification.Patient;
 import co.iaf.entity.identification.QrCodePatient;
@@ -93,7 +95,7 @@ public class IdentificationServiceImpl implements IdentificationService {
 
 	@Override
 	public Collection<Patient> getPatientsByIds(List<String> patientIds) {
-		return patientRepo.findAllById(patientIds);
+		return this.patientRepo.findAllById(patientIds);
 	}
 
 	@Override
@@ -148,7 +150,7 @@ public class IdentificationServiceImpl implements IdentificationService {
 
 	@Override
 	public List<InfosSup> getAllInfosSup(String patientId) {
-		return infoSupRepo.findByPatientPatientId(patientId);
+		return this.infoSupRepo.findByPatientPatientId(patientId);
 	}
 
 	@Override
@@ -202,7 +204,7 @@ public class IdentificationServiceImpl implements IdentificationService {
 
 	@Override
 	public QrCodePatient getQrCodeByPatient(Patient patient) {
-		return qrCodePatientRepo.findByPatient(patient);
+		return this.qrCodePatientRepo.findByPatient(patient);
 	}
 
 	// méthode de génération de qr code
@@ -236,13 +238,31 @@ public class IdentificationServiceImpl implements IdentificationService {
 		// Fusionner les informations supplémentaires
 		patientPrincipal.getInfosSup().addAll(patientDoublon.getInfosSup());
 		Patient patientFusion = addNewPatient(patientPrincipal);
-		
+
 		// Supprimer le patient doublon
 		// on supprime d'abord le Qrcode du patient en doublon
-		  QrCodePatient qrcodePatient = getQrCodeByPatient(patientDoublon);
-		  qrCodePatientRepo.delete(qrcodePatient);
-		  
-		  patientRepo.delete(patientDoublon);
-		 
+		QrCodePatient qrcodePatient = getQrCodeByPatient(patientDoublon);
+		this.qrCodePatientRepo.delete(qrcodePatient);
+
+		this.patientRepo.delete(patientDoublon);
+
+	}
+
+	@Override
+	public GroupePatient addNewGroupePatient(GroupePatient groupePatient) {
+		GroupePatient newGroupePatient = new GroupePatient();
+		newGroupePatient.setNomGroupe(groupePatient.getNomGroupe());
+		// on enregistre les patients du groupe
+		newGroupePatient.getGroupesRegistration()
+				.addAll(groupePatient.getGroupesRegistration().stream().map(grouperegis -> {
+					Patient patient = getPatientById(grouperegis.getPatient().getPatientId());
+					GroupeRegistration newGroupeRegistration = new GroupeRegistration();
+					newGroupeRegistration.setPatient(patient);
+					newGroupeRegistration.setGroupePatient(newGroupePatient);
+					newGroupeRegistration.setMotif(grouperegis.getMotif());
+					return newGroupeRegistration;
+				}).collect(Collectors.toList()));
+
+		return this.groupepatientRepo.save(newGroupePatient);
 	}
 }
