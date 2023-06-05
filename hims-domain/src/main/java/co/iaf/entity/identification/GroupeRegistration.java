@@ -36,6 +36,5 @@ public class GroupeRegistration {
 	@ManyToOne
 	@MapsId("groupePatientId")
 	@JoinColumn(name = "groupe_patient_id")
-	@JsonIgnore
 	private GroupePatient groupePatient;
 }

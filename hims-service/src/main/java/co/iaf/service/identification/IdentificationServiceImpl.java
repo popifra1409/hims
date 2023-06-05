@@ -14,6 +14,7 @@ import com.google.zxing.WriterException;
 
 import co.iaf.dao.exceptions.ResourceNotFoundException;
 import co.iaf.dao.identification.GroupePatientRepository;
+import co.iaf.dao.identification.GroupeRegistrationRepository;
 import co.iaf.dao.identification.InfoSupRepository;
 import co.iaf.dao.identification.PatientRepository;
 import co.iaf.dao.identification.QrCodePatientRepository;
@@ -35,14 +36,17 @@ public class IdentificationServiceImpl implements IdentificationService {
 	private InfoSupRepository infoSupRepo;
 	private QrCodePatientRepository qrCodePatientRepo;
 	private GroupePatientRepository groupepatientRepo;
+	private GroupeRegistrationRepository groupeRegisRepo;
 
 	public IdentificationServiceImpl(PatientRepository patientRepo, InfoSupRepository infoSupRepo,
-			QrCodePatientRepository qrCodePatientRepo, GroupePatientRepository groupepatientRepo) {
+			QrCodePatientRepository qrCodePatientRepo, GroupePatientRepository groupepatientRepo,
+			GroupeRegistrationRepository groupeRegisRepo) {
 		super();
 		this.patientRepo = patientRepo;
 		this.infoSupRepo = infoSupRepo;
 		this.qrCodePatientRepo = qrCodePatientRepo;
 		this.groupepatientRepo = groupepatientRepo;
+		this.groupeRegisRepo = groupeRegisRepo;
 	}
 
 	@Override
@@ -250,18 +254,19 @@ public class IdentificationServiceImpl implements IdentificationService {
 
 	@Override
 	public GroupePatient addNewGroupePatient(GroupePatient groupePatient) {
+		Collection<GroupeRegistration> grouperegis = groupePatient.getGroupesRegistration();
+		// sauvegarde du groupe patient
 		GroupePatient newGroupePatient = new GroupePatient();
 		newGroupePatient.setNomGroupe(groupePatient.getNomGroupe());
-		// on enregistre les patients du groupe
-		newGroupePatient.getGroupesRegistration()
-				.addAll(groupePatient.getGroupesRegistration().stream().map(grouperegis -> {
-					Patient patient = getPatientById(grouperegis.getPatient().getPatientId());
-					GroupeRegistration newGroupeRegistration = new GroupeRegistration();
-					newGroupeRegistration.setPatient(patient);
-					newGroupeRegistration.setGroupePatient(newGroupePatient);
-					newGroupeRegistration.setMotif(grouperegis.getMotif());
-					return newGroupeRegistration;
-				}).collect(Collectors.toList()));
+		newGroupePatient.getGroupesRegistration().addAll(grouperegis.stream().map(groupe -> {
+			Patient patient = getPatientById(groupe.getPatient().getPatientId());
+			GroupeRegistration newGroupeRegistration = new GroupeRegistration();
+			newGroupeRegistration.setPatient(patient);
+			newGroupeRegistration.setGroupePatient(newGroupePatient);
+			newGroupeRegistration.setMotif(groupe.getMotif());
+
+			return newGroupeRegistration;
+		}).collect(Collectors.toList()));
 
 		return this.groupepatientRepo.save(newGroupePatient);
 	}

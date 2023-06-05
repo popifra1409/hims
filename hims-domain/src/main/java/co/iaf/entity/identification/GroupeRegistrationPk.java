@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,9 +17,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class GroupeRegistrationPk implements Serializable {
 
-	@Column(name = "patient_id")
 	private String patientId;
-
-	@Column(name = "groupe_patient_id")
 	private Long groupePatientId;
 }
