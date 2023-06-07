@@ -14,10 +14,10 @@ import com.google.zxing.WriterException;
 
 import co.iaf.dao.exceptions.ResourceNotFoundException;
 import co.iaf.dao.identification.GroupePatientRepository;
-import co.iaf.dao.identification.GroupeRegistrationRepository;
 import co.iaf.dao.identification.InfoSupRepository;
 import co.iaf.dao.identification.PatientRepository;
 import co.iaf.dao.identification.QrCodePatientRepository;
+import co.iaf.entity.admission.ParametreDeSoin;
 import co.iaf.entity.admission.PriseParametreSoin;
 import co.iaf.entity.identification.GroupePatient;
 import co.iaf.entity.identification.GroupeRegistration;
@@ -36,34 +36,67 @@ public class IdentificationServiceImpl implements IdentificationService {
 	private InfoSupRepository infoSupRepo;
 	private QrCodePatientRepository qrCodePatientRepo;
 	private GroupePatientRepository groupepatientRepo;
-	private GroupeRegistrationRepository groupeRegisRepo;
 
 	public IdentificationServiceImpl(PatientRepository patientRepo, InfoSupRepository infoSupRepo,
-			QrCodePatientRepository qrCodePatientRepo, GroupePatientRepository groupepatientRepo,
-			GroupeRegistrationRepository groupeRegisRepo) {
+			QrCodePatientRepository qrCodePatientRepo, GroupePatientRepository groupepatientRepo) {
 		super();
 		this.patientRepo = patientRepo;
 		this.infoSupRepo = infoSupRepo;
 		this.qrCodePatientRepo = qrCodePatientRepo;
 		this.groupepatientRepo = groupepatientRepo;
-		this.groupeRegisRepo = groupeRegisRepo;
 	}
 
 	@Override
 	public Patient addNewPatient(Patient patient) {
+		// infos supplementaires du patient
 		Collection<InfosSup> infosupp = patient.getInfosSup();
+		// paramètres de soins associés au patient
+		Collection<PriseParametreSoin> prisesParams = patient.getPrisesParametreSoin();
 
-		Patient pat = this.patientRepo.save(patient);
+		Patient p = new Patient();
+		
+		if (prisesParams != null) {
+			// ajouter les prises de paramètres associées au patient
+			p.setPatientFirstName(patient.getPatientFirstName());
+			p.setPatientLastName(patient.getPatientLastName());
+			p.setPatientBirthDay(patient.getPatientBirthDay());
+			p.setPatientPlaceOfBirth(patient.getPatientPlaceOfBirth());
+			p.setPatientSex(patient.getPatientSex());
+			p.setPatientAge(patient.getPatientAge());
+			p.setPatientProfession(patient.getPatientProfession());
+			p.setPatientReligion(patient.getPatientReligion());
+			p.setPatientNationalite(patient.getPatientNationalite());
+			p.setEmail(patient.getEmail());
+			p.setTelephone(patient.getTelephone());
+			p.setAdresse(patient.getAdresse());
+
+			p.getPrisesParametreSoin().addAll(prisesParams.stream().map(param -> {
+				ParametreDeSoin paramsSoin = param.getParametreDeSoin();
+				PriseParametreSoin newPriseParam = new PriseParametreSoin();
+				newPriseParam.setParametreDeSoin(paramsSoin);
+				newPriseParam.setPatient(p);
+				newPriseParam.setDate(param.getDate());
+				newPriseParam.setValeur(param.getValeur());
+				newPriseParam.setCommentaire(param.getCommentaire());
+
+				return newPriseParam;
+			}).collect(Collectors.toList()));
+
+			this.patientRepo.save(p);
+		}
+		
+		//Patient pat = this.patientRepo.save(patient);
 		// on genere leQrCode du patient
-		addNewQrCodePatient(new QrCodePatient(), pat.getPatientId());
+		addNewQrCodePatient(new QrCodePatient(), p.getPatientId());
 
 		// informations supplémentaires
 		if (infosupp != null) {
 			infosupp.forEach(info -> {
-				this.infoSupRepo.save(new InfosSup(null, info.getCle(), info.getValeur(), pat));
+				this.infoSupRepo.save(new InfosSup(null, info.getCle(), info.getValeur(), p));
 			});
 		}
-		return pat;
+
+		return p;
 	}
 
 	@Override

@@ -92,7 +92,6 @@ public class Patient {
 
 	// Un patient peut avoir plusieurs prises de paramètres
 	@OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JsonIgnore
 	private Collection<PriseParametreSoin> prisesParametreSoin = new ArrayList<>();
 
 	// un patient peut subir plusieurq hospitalisations

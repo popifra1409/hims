@@ -241,12 +241,12 @@ public class AdmissionServiceImpl implements AdmissionService {
 
 	// mis à jour d'une prise de paramètre de soins
 	public PriseParametreSoin updatePriseParametreSoin(PriseParametreSoin priseParametreSoin, Long priseParametreSoinId) {
-		// si la prise de soins existent existe
-		if (priseParametreSoin != null && priseParametreSoin != null
-				&& getPriseParametreSoinById(priseParametreSoinId) != null) {
-			priseParametreSoin.setId(priseParametreSoinId);
-			return priseParametreSoinRepository.save(priseParametreSoin);
-		}
+		/*
+		 * // si la prise de soins existent existe if (priseParametreSoin != null &&
+		 * priseParametreSoin != null && getPriseParametreSoinById(priseParametreSoinId)
+		 * != null) { priseParametreSoin.setId(priseParametreSoinId); return
+		 * priseParametreSoinRepository.save(priseParametreSoin); }
+		 */
 		return null;
 	}
 
