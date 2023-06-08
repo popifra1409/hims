@@ -5,7 +5,6 @@ import java.util.List;
 
 import co.iaf.entity.admission.PriseParametreSoin;
 import co.iaf.entity.identification.GroupePatient;
-import co.iaf.entity.identification.GroupeRegistration;
 import co.iaf.entity.identification.InfosSup;
 import co.iaf.entity.identification.Patient;
 import co.iaf.entity.identification.QrCodePatient;

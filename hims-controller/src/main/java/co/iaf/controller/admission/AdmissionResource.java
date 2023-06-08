@@ -28,7 +28,6 @@ import co.iaf.entity.admission.TransfertHospit;
 import co.iaf.entity.parametrage.Services;
 import co.iaf.payloads.ApiResponse;
 import co.iaf.service.admission.AdmissionService;
-import lombok.Data;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -45,7 +44,7 @@ public class AdmissionResource {
 	/* ============ GESTION DES BATIMENTS ============= */
 
 	// liste des batiments
-	@GetMapping(path = "/batiment/all")
+	@GetMapping(path = "/batiments/all")
 	public ResponseEntity<?> listBatiments() {
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
 		List<Batiment> listbatiments = admissionService.getAllBatiments();
@@ -62,12 +61,12 @@ public class AdmissionResource {
 	}
 
 	// save batiment
-	@PostMapping(path = "/batiment")
+	@PostMapping(path = "/batiments/save")
 	public ResponseEntity<?> saveBatiment(@RequestBody Batiment batiment) {
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
 		admissionService.addNewBatiment(batiment);
 		map.put("status", 1);
-		map.put("data", "Bâtiment enregistré avec succès");
+		map.put("data", "Bâtiment créé avec succès");
 		return new ResponseEntity<>(map, HttpStatus.CREATED);
 	}
 

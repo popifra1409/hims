@@ -67,18 +67,16 @@ public class AdmissionServiceImpl implements AdmissionService {
 
 	// créer d'un nouveau batiment
 	public Batiment addNewBatiment(Batiment batiment) {
-		Batiment batimentSave = batimentRepository.save(batiment);
 		Collection<Chambre> chambres = batiment.getChambres();
+		Batiment newBatiment = this.batimentRepository.save(batiment);
 		// s'il existe des chambres associées
-		if (chambres != null) {
+		if (chambres != null && !chambres.isEmpty()) {
 			chambres.forEach(cham -> {
-				// vérifie que la chambre existe
-				if (getChambreById(cham.getId()) != null)
-					chambreRepository.save(new Chambre(null, cham.getLibelle(), cham.getDescription(),
-							cham.getPrixChambre(), batiment, null));
+				this.chambreRepository.save(new Chambre(null, cham.getLibelle(), cham.getDescription(),
+						cham.getPrixChambre(), newBatiment, null));
 			});
 		}
-		return batimentSave;
+		return newBatiment;
 	}
 
 	// mis à jour d'un batiment
@@ -167,7 +165,7 @@ public class AdmissionServiceImpl implements AdmissionService {
 
 	// mis à jour d'un lit
 	public Lit updateLit(Lit lit, Long litId) {
-		
+
 		// si le le lit existe
 		if (lit != null && getLitById(litId) != null) {
 			lit.setId(litId);
@@ -240,7 +238,8 @@ public class AdmissionServiceImpl implements AdmissionService {
 	}
 
 	// mis à jour d'une prise de paramètre de soins
-	public PriseParametreSoin updatePriseParametreSoin(PriseParametreSoin priseParametreSoin, Long priseParametreSoinId) {
+	public PriseParametreSoin updatePriseParametreSoin(PriseParametreSoin priseParametreSoin,
+			Long priseParametreSoinId) {
 		/*
 		 * // si la prise de soins existent existe if (priseParametreSoin != null &&
 		 * priseParametreSoin != null && getPriseParametreSoinById(priseParametreSoinId)
