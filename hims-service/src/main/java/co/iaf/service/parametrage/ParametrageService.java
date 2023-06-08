@@ -2,7 +2,9 @@ package co.iaf.service.parametrage;
 
 import java.util.List;
 
+import co.iaf.entity.parametrage.Domaine;
 import co.iaf.entity.parametrage.Services;
+import co.iaf.entity.parametrage.TypeDomaine;
 
 public interface ParametrageService {
 
@@ -22,4 +24,40 @@ public interface ParametrageService {
 
 	// recupérer tous les services
 	public List<Services> getAllServices();
+
+	/*=====================GESTION DES DOMAINES=========================*/
+	
+	// créer un domaine
+	public Domaine addNewDomaine(Domaine domaine);
+	
+	//recuperer un domaine par son id
+	public Domaine getDomaineById(Long domaineId);
+	
+	// liste de tout les domaines
+	public List<Domaine> getAllDomaines();
+	
+	// suppression d'un domain
+	public void deleteDomaine(Domaine domaine);
+	
+	// mis à jour d'un domaine
+	public Domaine updateDomaine(Long domaineId, Domaine domaine);
+	
+	
+	/*============================GESTION DES TYPES DOMAINES======================*/
+	
+	// créer un type domaine
+	public TypeDomaine addNewTypeDomaine(TypeDomaine typeDomaine);
+	
+	//recuperer un Type domaine par son id
+	public TypeDomaine getTypeDomaineById(Long typeDomaineId);
+	
+	// liste de tout les domaines
+	public List<TypeDomaine> getAllTypeDomaines();
+	
+	// suppression d'un domain
+	public void deleteTypeDomaine(TypeDomaine typedomaine);
+		
+	// mis à jour d'un domaine
+	public TypeDomaine updateTypeDomaine(Long typeDomaineId, TypeDomaine typeDomaine);
+
 }

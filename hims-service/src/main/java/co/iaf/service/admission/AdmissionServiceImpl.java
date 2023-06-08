@@ -165,7 +165,6 @@ public class AdmissionServiceImpl implements AdmissionService {
 
 	// mis à jour d'un lit
 	public Lit updateLit(Lit lit, Long litId) {
-
 		// si le le lit existe
 		if (lit != null && getLitById(litId) != null) {
 			lit.setId(litId);

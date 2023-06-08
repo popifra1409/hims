@@ -54,7 +54,7 @@ public class IdentificationServiceImpl implements IdentificationService {
 		Collection<PriseParametreSoin> prisesParams = patient.getPrisesParametreSoin();
 
 		Patient p = new Patient();
-		
+
 		if (prisesParams != null) {
 			// ajouter les prises de paramètres associées au patient
 			p.setPatientFirstName(patient.getPatientFirstName());
@@ -84,8 +84,8 @@ public class IdentificationServiceImpl implements IdentificationService {
 
 			this.patientRepo.save(p);
 		}
-		
-		//Patient pat = this.patientRepo.save(patient);
+
+		// Patient pat = this.patientRepo.save(patient);
 		// on genere leQrCode du patient
 		addNewQrCodePatient(new QrCodePatient(), p.getPatientId());
 

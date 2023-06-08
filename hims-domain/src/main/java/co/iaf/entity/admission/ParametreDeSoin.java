@@ -21,7 +21,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name="iaf_parametre_soins")
+@Table(name = "iaf_parametre_soins")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -33,10 +33,8 @@ public class ParametreDeSoin {
 	private Long id;
 	private String libelle;
 	private String unite;
-	//un paramètre de soins peut avoir plusieurs prises
+	// un paramètre de soins peut avoir plusieurs prises
 	@OneToMany(mappedBy = "parametreDeSoin", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JsonIgnore
 	private Collection<PriseParametreSoin> prisesParametreSoin = new ArrayList<>();
-	
-	
 }
