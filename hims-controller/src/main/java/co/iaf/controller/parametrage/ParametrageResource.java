@@ -104,10 +104,11 @@ public class ParametrageResource {
 
 	// ajouter un nouveau Domaine
 
-	@PostMapping(path = "/domaines/save")
-	public ResponseEntity<?> saveDomaine(@RequestBody Domaine domaine) {
+	@PostMapping(path = "/domaines/save/{domaineParentId}/{typeDomaineId}")
+	public ResponseEntity<?> saveDomaine(@PathVariable(name = "domaineParentId") Long parentId,
+			@PathVariable(name = "typeDomaineId") Long typeId, @RequestBody Domaine domaine) {
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
-		parametrageService.addNewDomaine(domaine);
+		parametrageService.addNewDomaine(domaine, parentId, typeId);
 		map.put("status", 1);
 		map.put("message", new ApiResponse("Domaine créé avec succès !", true));
 		return new ResponseEntity<>(map, HttpStatus.CREATED);

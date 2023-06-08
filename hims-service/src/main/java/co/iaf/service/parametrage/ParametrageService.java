@@ -28,7 +28,7 @@ public interface ParametrageService {
 	/*=====================GESTION DES DOMAINES=========================*/
 	
 	// créer un domaine
-	public Domaine addNewDomaine(Domaine domaine);
+	public Domaine addNewDomaine(Domaine domaine, Long domaineParentId, Long typeDomaineId);
 	
 	//recuperer un domaine par son id
 	public Domaine getDomaineById(Long domaineId);

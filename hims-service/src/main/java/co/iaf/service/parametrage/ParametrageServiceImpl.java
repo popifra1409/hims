@@ -9,10 +9,12 @@ import org.springframework.stereotype.Service;
 
 import co.iaf.dao.admission.BatimentRepository;
 import co.iaf.dao.exceptions.ResourceNotFoundException;
+import co.iaf.dao.facturation.PrestationRepository;
 import co.iaf.dao.parametrage.DomaineRepository;
 import co.iaf.dao.parametrage.ServiceRepository;
 import co.iaf.dao.parametrage.TypeDomaineRepository;
 import co.iaf.entity.admission.Batiment;
+import co.iaf.entity.facturation.Prestation;
 import co.iaf.entity.parametrage.Domaine;
 import co.iaf.entity.parametrage.Services;
 import co.iaf.entity.parametrage.TypeDomaine;
@@ -25,13 +27,16 @@ public class ParametrageServiceImpl implements ParametrageService {
 	private BatimentRepository batimentRepository;
 	private TypeDomaineRepository typeDomaineRepository;
 	private DomaineRepository domaineRepository;
+	private PrestationRepository prestationRepository;
 
 	public ParametrageServiceImpl(ServiceRepository serviceRepository, BatimentRepository batimentRepository,
-			TypeDomaineRepository typeDomaineRepository, DomaineRepository domaineRepository) {
+			TypeDomaineRepository typeDomaineRepository, DomaineRepository domaineRepository,
+			PrestationRepository prestationRepository) {
 		this.serviceRepository = serviceRepository;
 		this.batimentRepository = batimentRepository;
 		this.typeDomaineRepository = typeDomaineRepository;
 		this.domaineRepository = domaineRepository;
+		this.prestationRepository = prestationRepository;
 	}
 
 	/* ============ GESTION DES SERVICES ============= */
@@ -80,12 +85,28 @@ public class ParametrageServiceImpl implements ParametrageService {
 	/* =======================GESTION DES DOMAINES============================ */
 	// créer un nouveau domaine
 	@Override
-	public Domaine addNewDomaine(Domaine domaine) {
+	public Domaine addNewDomaine(Domaine domaine, Long domaineParentId, Long typeDomaineId) {
+		// on recupère le type domaine auquel appartient le domaine
+		TypeDomaine typeDomaine = getTypeDomaineById(typeDomaineId);
+		//on recupère le domaine Parent s'il existe
+		Domaine domaineParent = getDomaineById(domaineParentId);
+		// on recupère les prestations associées au domaine
+		Collection<Prestation> prestations = domaine.getPrestations();
 
-		Domaine domain = this.domaineRepository.save(domaine);
+		// on charge le type domaine et le domaine parent
+		domaine.setTypeDomaine(typeDomaine);
+		domaine.setDomaineParent(domaineParent);
 
-		return domain;
+		Domaine newDomaine = this.domaineRepository.save(domaine);
 
+		if (prestations != null && !prestations.isEmpty()) {
+			for (Prestation prestation : prestations) {
+				prestation.setDomaine(newDomaine);
+			}
+			this.prestationRepository.saveAll(prestations); // Enregistrer tous les domaines en une seule fois
+		}
+
+		return newDomaine;
 	}
 
 	// récupérer un domaine par son id
@@ -133,11 +154,11 @@ public class ParametrageServiceImpl implements ParametrageService {
 		Collection<Domaine> domaines = typeDomaine.getDomaines();
 		TypeDomaine newTypedomaine = this.typeDomaineRepository.save(typeDomaine);
 
-		if (domaines != null) {
-			domaines.forEach(domaine -> {
-				this.domaineRepository.save(new Domaine(null, domaine.getCompteDomaine(), domaine.getDesignation(),
-						domaine.getLettreCle(), domaine.getDescription(), domaine.getDomaineParent(), newTypedomaine));
-			});
+		if (domaines != null && !domaines.isEmpty()) {
+			for (Domaine domaine : domaines) {
+				domaine.setTypeDomaine(newTypedomaine); // Définir le typeDomaine pour chaque domaine
+			}
+			this.domaineRepository.saveAll(domaines); // Enregistrer tous les domaines en une seule fois
 		}
 		return newTypedomaine;
 	}
@@ -146,7 +167,7 @@ public class ParametrageServiceImpl implements ParametrageService {
 	@Override
 	public TypeDomaine getTypeDomaineById(Long typeDomaineId) {
 		TypeDomaine typedomaine = this.typeDomaineRepository.findById(typeDomaineId)
-				.orElseThrow(() -> new ResourceNotFoundException("TypeDomaine", "TypeDomaine Id", 0));
+				.orElseThrow(() -> new ResourceNotFoundException("Type Domaine:", "TypeDomaine Id", 0));
 		return typedomaine;
 	}
 

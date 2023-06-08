@@ -5,11 +5,14 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
+import co.iaf.entity.parametrage.Domaine;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -87,10 +90,12 @@ public class Prestation {
 	private boolean isProduitpharmacie;
 	
 	// une prestation appartient à un domaine
-	/*
-	 * @ManyToOne private Domaine domaine;
-	 * 
-	 * //une prestation peut avoir plusieurs paramètres private
+	
+	 @ManyToOne
+	 @JoinColumn(name = "domaine_prestation_id")
+	 private Domaine domaine;
+	 
+	 /* //une prestation peut avoir plusieurs paramètres private
 	 * Collection<ParametrePrestation> parametres;
 	 * 
 	 * //une prestation est réalisé par un service private Service
