@@ -1,12 +1,11 @@
 package co.iaf.service.facturation;
 
-
-
 import java.util.Collection;
 import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import co.iaf.dao.exceptions.ResourceNotFoundException;
@@ -16,87 +15,51 @@ import co.iaf.dao.parametrage.DomaineRepository;
 import co.iaf.entity.facturation.Imputation;
 import co.iaf.entity.facturation.Prestation;
 import co.iaf.entity.parametrage.Domaine;
-import co.iaf.entity.parametrage.Services;
-import co.iaf.entity.parametrage.TypeDomaine;
-import co.iaf.entity.pharmacie.Produit;
-
+import co.iaf.service.parametrage.ParametrageService;
 
 @Service
 @Transactional
 public class FacturationServicelmpl implements FacturationService {
-	
-	private PrestationRepository prestationRepository;
-	private DomaineRepository domaineRepository;
-	private ImputationRepository imputationRepository;
-	
-	
-	public FacturationServicelmpl(PrestationRepository prestationRepository, DomaineRepository domaineRepository, ImputationRepository imputationRepository) {
-		this.prestationRepository = prestationRepository;
-		this.domaineRepository = domaineRepository;
-		this.imputationRepository = imputationRepository;
+
+	private PrestationRepository prestationRepo;
+	// private DomaineRepository domaineRepository;
+	private ImputationRepository imputationRepo;
+
+	@Autowired
+	private ParametrageService parametrageService;
+
+	public FacturationServicelmpl(PrestationRepository prestationRepo, DomaineRepository domaineRepository,
+			ImputationRepository imputationRepo) {
+		this.prestationRepo = prestationRepo;
+		// this.domaineRepository = domaineRepository;
+		this.imputationRepo = imputationRepo;
 	}
-	
-	/* =======================GESTION DES PRESTATIONS============================ */
-	
-	// créer une nouvelle prestation
+
 	@Override
-	public Prestation addNewPrestation(Prestation prestation, Long domaineParentId, Long imputationId) {
-		
+	public Prestation addNewPrestation(Prestation prestation, Long domaineId, Long imputationId) {
+
 		Imputation imputation = getImputationById(imputationId);
-	    Domaine domaineParent = getDomaineById(domaineParentId);
-	
+		Domaine domaine = parametrageService.getDomaineById(domaineId);
 
-	    prestation.setImputation(imputation);
-	    prestation.setDomaine(domaineParent);
+		prestation.setImputation(imputation);
+		prestation.setDomaine(domaine);
 
-	    Prestation newPrestation = this.prestationRepository.save(prestation);
-	 // Récupérer les IDs associés
-	    Long newPrestationId = newPrestation.getId();
-	    Long newImputationId = newPrestation.getImputation().getId();
-	    Long newDomaineParentId = newPrestation.getDomaine().getId();
-	    
-	    // Faire ce que vous voulez avec les IDs récupérés
-	    
-	    return newPrestation;
-		}
+		Prestation newPrestation = this.prestationRepo.save(prestation);
+
+		return newPrestation;
+	}
+
 	// recuperer une prestation par son id
 	@Override
 	public Prestation getPrestationById(Long prestationId) {
-		Prestation prestation = this.prestationRepository.findById(prestationId)
+		Prestation prestation = this.prestationRepo.findById(prestationId)
 				.orElseThrow(() -> new ResourceNotFoundException("Prestation", "Prestation Id", 0));
 		return prestation;
 	}
 
-	public Domaine getDomaineById(Long domaineId) {
-		Domaine domaine = this.domaineRepository.findById(domaineId)
-				.orElseThrow(() -> new ResourceNotFoundException("Domaine", "Domaine Id", 0));
-		return domaine;
-	}
-
-	@Override
-	public Imputation addNewImputation(Imputation imputation) {
-		Collection<Prestation> prestations = imputation.getPrestations();
-		Imputation newImputation = this.imputationRepository.save(imputation);
-
-		if (prestations != null && !prestations.isEmpty()) {
-			for (Prestation prestation : prestations) {
-				prestation.setImputation(newImputation); // Définir l'imputation pour chaque prestation
-			}
-			this.prestationRepository.saveAll(prestations); // Enregistrer tous les imputations en une seule fois
-		}
-		return newImputation;
-	}
-
-	@Override
-	public Imputation getImputationById(Long imputationId) {
-		Imputation imputation = this.imputationRepository.findById(imputationId)
-				.orElseThrow(() -> new ResourceNotFoundException("Imputation", "Imputation Id", 0));
-		return imputation;
-	}
-
 	@Override
 	public List<Prestation> getAllPrestation() {
-		return this.prestationRepository.findAll();
+		return this.prestationRepo.findAll();
 	}
 
 	@Override
@@ -122,18 +85,49 @@ public class FacturationServicelmpl implements FacturationService {
 		prest.setQuantifiable(prestation.isQuantifiable());
 		prest.setProduitpharmacie(prestation.isProduitpharmacie());
 
-		return this.prestationRepository.save(prest);
+		return this.prestationRepo.save(prest);
 	}
 
 	@Override
 	public void deletePrestation(Prestation prestationId) {
-		this.prestationRepository.delete(prestationId);
-		
+		this.prestationRepo.delete(prestationId);
+
+	}
+
+	@Override
+	public List<Prestation> getPrestationsByDomaine(Long domaineId) {
+		return prestationRepo.findByDomaine(parametrageService.getDomaineById(domaineId));
+	}
+
+	@Override
+	public List<Prestation> getPrestationsByImputation(Long imputationId) {
+		return prestationRepo.findByImputation(getImputationById(imputationId));
+	}
+
+	@Override
+	public Imputation addNewImputation(Imputation imputation) {
+		Collection<Prestation> prestations = imputation.getPrestations();
+		Imputation newImputation = this.imputationRepo.save(imputation);
+
+		if (prestations != null && !prestations.isEmpty()) {
+			for (Prestation prestation : prestations) {
+				prestation.setImputation(newImputation); // Définir l'imputation pour chaque prestation
+			}
+			this.prestationRepo.saveAll(prestations); // Enregistrer tous les imputations en une seule fois
+		}
+		return newImputation;
+	}
+
+	@Override
+	public Imputation getImputationById(Long imputationId) {
+		Imputation imputation = this.imputationRepo.findById(imputationId)
+				.orElseThrow(() -> new ResourceNotFoundException("Imputation", "Imputation Id", 0));
+		return imputation;
 	}
 
 	@Override
 	public List<Imputation> getAllImputation() {
-		return this.imputationRepository.findAll();
+		return this.imputationRepo.findAll();
 	}
 
 	@Override
@@ -142,19 +136,14 @@ public class FacturationServicelmpl implements FacturationService {
 		i.setNmroCompte(imputation.getNmroCompte());
 		i.setLibelle(imputation.getLibelle());
 		i.setCommentaire(imputation.getCommentaire());
-		
-		return this.imputationRepository.save(i);
+
+		return this.imputationRepo.save(i);
 	}
 
 	@Override
 	public void deleteImputation(Imputation imputationId) {
-		this.imputationRepository.delete(imputationId);
-		
+		this.imputationRepo.delete(imputationId);
+
 	}
 
-
-
-	
-	}
-
-
+}

@@ -106,7 +106,7 @@ public class Prestation {
 	private Imputation imputation;
 
 	//une prestation peut avoir plusieurs paramètres private
-	@OneToMany(mappedBy = "imputation", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "prestation", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	Collection<ParametrePrestation> parametres;
 	 
 }
