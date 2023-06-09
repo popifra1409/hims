@@ -1,12 +1,17 @@
 package co.iaf.entity.facturation;
 
+import java.util.Collection;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
@@ -29,7 +34,7 @@ public class Prestation {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "code_prestation")
+	@Column(name = "code_prestation", unique = true)
 	private String codePrestation;
 
 	@Column(name = "designation_usuelle")
@@ -77,37 +82,31 @@ public class Prestation {
 
 	@Column(name = "is_suivi_medical")
 	private boolean isSuiviMedical;
-	
+
 	private String commentaire;
-	
+
 	@Column(name = "is_tarif_formule")
 	private boolean isTarifFormule;
-	
+
 	@Column(name = "is_quantifiable")
 	private boolean isQuantifiable;
-	
+
 	@Column(name = "is_produit_pharmacie")
 	private boolean isProduitpharmacie;
-	
+
 	// une prestation appartient à un domaine
-	
-	 @ManyToOne
-	 @JoinColumn(name = "domaine_prestation_id")
-	 private Domaine domaine;
+
+	@ManyToOne
+	@JoinColumn(name = "domaine_prestation_id")
+	private Domaine domaine;
+
+	// une prestation contribue à une ligne d'imputation
+	@ManyToOne
+	@JoinColumn(name = "imputation_id")
+	private Imputation imputation;
+
+	//une prestation peut avoir plusieurs paramètres private
+	@OneToMany(mappedBy = "imputation", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	Collection<ParametrePrestation> parametres;
 	 
-	 /* //une prestation peut avoir plusieurs paramètres private
-	 * Collection<ParametrePrestation> parametres;
-	 * 
-	 * //une prestation est réalisé par un service private Service
-	 * serviceRealisateur;
-	 * 
-	 * //une prestation contribue à une ligne d'imputation private Imputation
-	 * imputation;
-	 * 
-	 * //une prestation est réalisé par un agent
-	 * 
-	 * @ManyToOne private Agent agent;
-	 */
-	
-	//
 }
