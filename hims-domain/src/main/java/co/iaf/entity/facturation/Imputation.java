@@ -1,5 +1,6 @@
 package co.iaf.entity.facturation;
 
+
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -16,6 +17,7 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,20 +29,21 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Imputation {
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "numero_compte", unique = true)
-	private String nmroCpte;
+	@Column(name = "numero_compte")
+	private String nmroCompte;
 
+	@Column(name = "libelle_compte")
 	private String libelle;
 
 	private String commentaire;
-
-	// une imputation peut contenir plusieurs prestations
+	
+	//un domaine peut contenir plusieurs prestations
 	@OneToMany(mappedBy = "imputation", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
 	private Collection<Prestation> prestations = new ArrayList<>();
 
 }
+
