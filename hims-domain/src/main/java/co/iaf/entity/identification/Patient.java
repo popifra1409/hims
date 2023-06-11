@@ -24,6 +24,9 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import co.iaf.entity.admission.Hospitalisation;
 import co.iaf.entity.admission.PriseParametreSoin;
 import co.iaf.entity.enums.Sexe;
+import co.iaf.entity.facturation.Devis;
+import co.iaf.entity.facturation.Facture;
+import co.iaf.entity.facturation.Prefacture;
 import co.iaf.entity.generator.PatientNipGenerator;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -81,10 +84,10 @@ public class Patient {
 	private String telephone;
 
 	private String adresse;
-	
-	//un patient a un seuk qr code généré
+
+	// un patient a un seuk qr code généré
 	@OneToOne(mappedBy = "patient")
-    private QrCodePatient qrCodePatient;
+	private QrCodePatient qrCodePatient;
 
 	// Un patient peut avoir plusieurs informations supplémentaires
 	@OneToMany(mappedBy = "patient", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
@@ -93,6 +96,21 @@ public class Patient {
 	// Un patient peut avoir plusieurs prises de paramètres
 	@OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Collection<PriseParametreSoin> prisesParametreSoin = new ArrayList<>();
+
+	// un patient peut avoir plusieurs factures
+	@OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JsonIgnore
+	private Collection<Facture> factures = new ArrayList<>();
+
+	// un patient peut avoir plusieurs préfactures
+	@OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JsonIgnore
+	private Collection<Prefacture> prefactures = new ArrayList<>();
+	
+	//un patient peut avoirs plusieurs devis
+	@OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JsonIgnore
+	private Collection<Devis> deviss = new ArrayList<>();
 
 	// un patient peut subir plusieurq hospitalisations
 	@OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

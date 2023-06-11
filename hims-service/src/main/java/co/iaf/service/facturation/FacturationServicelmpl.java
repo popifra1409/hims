@@ -22,16 +22,13 @@ import co.iaf.service.parametrage.ParametrageService;
 public class FacturationServicelmpl implements FacturationService {
 
 	private PrestationRepository prestationRepo;
-	// private DomaineRepository domaineRepository;
 	private ImputationRepository imputationRepo;
 
 	@Autowired
 	private ParametrageService parametrageService;
 
-	public FacturationServicelmpl(PrestationRepository prestationRepo, DomaineRepository domaineRepository,
-			ImputationRepository imputationRepo) {
+	public FacturationServicelmpl(PrestationRepository prestationRepo, ImputationRepository imputationRepo) {
 		this.prestationRepo = prestationRepo;
-		// this.domaineRepository = domaineRepository;
 		this.imputationRepo = imputationRepo;
 	}
 

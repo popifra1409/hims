@@ -6,11 +6,15 @@ import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -19,10 +23,9 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
-import co.iaf.entity.admission.Intervention;
 import co.iaf.entity.enums.Sexe;
 import co.iaf.entity.enums.TypeAgent;
-import co.iaf.entity.parametrage.Services;
+import co.iaf.entity.parametrage.ServiceAttache;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -32,6 +35,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "Mode_agent", discriminatorType = DiscriminatorType.STRING)
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public abstract class Agent {
 
@@ -68,19 +73,22 @@ public abstract class Agent {
 	private String email;
 
 	private String religion;
-	
+
 	private TypeAgent typeAgent;
-
-	// un agent peut effectuer une ou plusieurs interventions
-	@OneToMany(mappedBy = "medecin", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private Collection<Intervention> interventions = new ArrayList<>();
-
-	// un agent est attaché à un service
-	@ManyToOne
-	@JoinColumn(name = "service_attache")
-	private Services serviceAttache;
 
 	// Un agent peut avoir plusieurs informations supplémentaires
 	@OneToMany(mappedBy = "agent", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Collection<AgentInfosSup> agentInfosSup = new ArrayList<>();
+
+	// un agent est attaché à un service
+	@ManyToOne
+	@JoinColumn(name = "service_attache_id")
+	private ServiceAttache serviceAttache;
+
+	// un agent peut effectuer une ou plusieurs interventions
+	/*
+	 * @OneToMany(mappedBy = "medecin", cascade = CascadeType.ALL, fetch =
+	 * FetchType.LAZY) private Collection<Intervention> interventions = new
+	 * ArrayList<>();
+	 */
 }

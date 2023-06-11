@@ -11,7 +11,7 @@ import co.iaf.dao.admission.BatimentRepository;
 import co.iaf.dao.exceptions.ResourceNotFoundException;
 import co.iaf.dao.facturation.PrestationRepository;
 import co.iaf.dao.parametrage.DomaineRepository;
-import co.iaf.dao.parametrage.ServiceRepository;
+import co.iaf.dao.parametrage.ServiceAttacheRepository;
 import co.iaf.dao.parametrage.TypeDomaineRepository;
 import co.iaf.entity.admission.Batiment;
 import co.iaf.entity.facturation.Prestation;
@@ -23,16 +23,16 @@ import co.iaf.entity.parametrage.TypeDomaine;
 @Transactional
 public class ParametrageServiceImpl implements ParametrageService {
 
-	private ServiceRepository serviceRepository;
+	private ServiceAttacheRepository serviceAttacheRepository;
 	private BatimentRepository batimentRepository;
 	private TypeDomaineRepository typeDomaineRepository;
 	private DomaineRepository domaineRepository;
 	private PrestationRepository prestationRepository;
 
-	public ParametrageServiceImpl(ServiceRepository serviceRepository, BatimentRepository batimentRepository,
+	public ParametrageServiceImpl(ServiceAttacheRepository serviceAttacheRepository, BatimentRepository batimentRepository,
 			TypeDomaineRepository typeDomaineRepository, DomaineRepository domaineRepository,
 			PrestationRepository prestationRepository) {
-		this.serviceRepository = serviceRepository;
+		this.serviceAttacheRepository = serviceAttacheRepository;
 		this.batimentRepository = batimentRepository;
 		this.typeDomaineRepository = typeDomaineRepository;
 		this.domaineRepository = domaineRepository;
@@ -47,39 +47,40 @@ public class ParametrageServiceImpl implements ParametrageService {
 				.orElseThrow(() -> new ResourceNotFoundException("Batiment:", "Batiment Id", batimentId));
 		TypeDomaine typeDomaine = this.typeDomaineRepository.findById(typeDomaineId)
 				.orElseThrow(() -> new ResourceNotFoundException("Type Domaine:", "Type Domaine Id", typeDomaineId));
-		Services serviceParent = this.serviceRepository.findById(serviceId)
+		Services serviceParent = this.serviceAttacheRepository.findById(serviceId)
 				.orElseThrow(() -> new ResourceNotFoundException("Service Parent:", "Service Id", serviceId));
 
-		service.setBatiment(batiment);
-		service.setTypeDomaine(typeDomaine);
-		service.setServiceParent(serviceParent);
+		/*
+		 * service.setBatiment(batiment); service.setTypeDomaine(typeDomaine);
+		 * service.setServiceParent(serviceParent);
+		 */
 
-		return this.serviceRepository.save(service);
+		return this.serviceAttacheRepository.save(service);
 	}
 
 	// mis à jour d'un service
 	public Services updateService(Long serviceId, Services service) {
 		if (getServiceById(serviceId) != null) {
 			service.setId(serviceId);
-			return this.serviceRepository.save(service);
+			return this.serviceAttacheRepository.save(service);
 		}
 		return null;
 	}
 
 	// suppression d'un service
 	public void deleteService(Long serviceId) {
-		this.serviceRepository.deleteById(serviceId);
+		this.serviceAttacheRepository.deleteById(serviceId);
 	}
 
 	// recupérer un service par son id
 	public Services getServiceById(Long serviceId) {
-		return this.serviceRepository.findById(serviceId)
+		return this.serviceAttacheRepository.findById(serviceId)
 				.orElseThrow(() -> new ResourceNotFoundException("Service", "Service Id", serviceId));
 	}
 
 	// recupérer tous les services
 	public List<Services> getAllServices() {
-		return this.serviceRepository.findAll();
+		return this.serviceAttacheRepository.findAll();
 	}
 
 	/* =======================GESTION DES DOMAINES============================ */
