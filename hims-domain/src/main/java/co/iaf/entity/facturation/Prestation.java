@@ -1,5 +1,6 @@
 package co.iaf.entity.facturation;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.persistence.CascadeType;
@@ -18,6 +19,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import co.iaf.entity.parametrage.Domaine;
+import co.iaf.entity.pec.PriseEnCharge;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -105,8 +107,12 @@ public class Prestation {
 	@JoinColumn(name = "imputation_id")
 	private Imputation imputation;
 
-	//une prestation peut avoir plusieurs paramètres private
-	@OneToMany(mappedBy = "prestation", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	// une prestation peut avoir plusieurs paramètres private
+	@OneToMany(mappedBy = "prestation", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	Collection<ParametrePrestation> parametres;
-	 
+
+	// une prestation peut être prise en charge plusieurs fois
+	@OneToMany(mappedBy = "prestation", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private Collection<PriseEnCharge> prisesEnCharge = new ArrayList<>();
+
 }

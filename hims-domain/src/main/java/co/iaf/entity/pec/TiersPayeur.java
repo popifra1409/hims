@@ -1,20 +1,14 @@
 package co.iaf.entity.pec;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
@@ -62,8 +56,4 @@ public abstract class TiersPayeur {
 	private boolean isDesactive;
 
 	private float tva;
-
-	// un tiers payeurs peut gérer plusierus prise en charge
-	@OneToMany(mappedBy = "tiersPayeur", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private Collection<PriseEnCharge> prisesEnCharge = new ArrayList<>();
 }

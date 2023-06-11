@@ -1,18 +1,13 @@
 package co.iaf.entity.pec;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
@@ -20,6 +15,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import co.iaf.entity.enums.TypePriseEnCharge;
 import co.iaf.entity.facturation.Prestation;
+import co.iaf.entity.identification.GroupePatient;
 import co.iaf.entity.identification.Patient;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -33,9 +29,8 @@ import lombok.NoArgsConstructor;
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class PriseEnCharge {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	@EmbeddedId
+	private PriseEnChargePk id = new PriseEnChargePk();
 
 	@Column(name = "taux_pec")
 	private float tauxPEC;
@@ -60,17 +55,28 @@ public class PriseEnCharge {
 	@Column(name = "type_pec")
 	private TypePriseEnCharge type;
 
-	// une prise an charge concerne un patient
 	@ManyToOne
-	@JoinColumn(name = "patient_nip")
+	@MapsId("prestationId")
+	@JoinColumn(name = "prestation_id")
+	private Prestation prestation;
+
+	@ManyToOne
+	@MapsId("patientId")
+	@JoinColumn(name = "patient_id")
 	private Patient patient;
 
 	@ManyToOne
-	@JoinColumn(name = "tiers_id")
-	// une prise en charge est effectuée par un tiers
-	private TiersPayeur tiersPayeur;
+	@MapsId("groupePatientId")
+	@JoinColumn(name = "groupe_patient_id")
+	private GroupePatient groupePatient;
 
-	// une prise peut concerner plusieurs prestations
-	@ManyToMany(fetch = FetchType.EAGER)
-	private Collection<Prestation> prestations = new ArrayList<>();
+	@ManyToOne
+	@MapsId("assureurId")
+	@JoinColumn(name = "assureur_id")
+	private Assureur assureur;
+
+	@ManyToOne
+	@MapsId("societeId")
+	@JoinColumn(name = "societe_id")
+	private Societe societe;
 }

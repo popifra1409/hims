@@ -28,6 +28,7 @@ import co.iaf.entity.facturation.Devis;
 import co.iaf.entity.facturation.Facture;
 import co.iaf.entity.facturation.Prefacture;
 import co.iaf.entity.generator.PatientNipGenerator;
+import co.iaf.entity.pec.PriseEnCharge;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -106,8 +107,8 @@ public class Patient {
 	@OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JsonIgnore
 	private Collection<Prefacture> prefactures = new ArrayList<>();
-	
-	//un patient peut avoirs plusieurs devis
+
+	// un patient peut avoirs plusieurs devis
 	@OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JsonIgnore
 	private Collection<Devis> deviss = new ArrayList<>();
@@ -122,4 +123,9 @@ public class Patient {
 	@OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JsonIgnore
 	private Collection<GroupeRegistration> groupesRegistration = new ArrayList<>();
+
+	// un patient peut avoir multiples prises en charge
+	@OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JsonIgnore
+	private Collection<PriseEnCharge> prisesEnCharge = new ArrayList<>();
 }

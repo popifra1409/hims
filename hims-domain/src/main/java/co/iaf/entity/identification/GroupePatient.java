@@ -16,6 +16,7 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
+import co.iaf.entity.pec.PriseEnCharge;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -29,7 +30,7 @@ import lombok.NoArgsConstructor;
 public class GroupePatient {
 
 	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@Column(name = "nom_groupe")
@@ -38,4 +39,8 @@ public class GroupePatient {
 	// un groupe patient peut être présent dans plusieurs groupes d'enregistrement
 	@OneToMany(mappedBy = "groupePatient", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Collection<GroupeRegistration> groupesRegistration = new ArrayList<>();
+
+	// un groupe patient peut avoir multiples prise en charge
+	@OneToMany(mappedBy = "groupePatient", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private Collection<PriseEnCharge> prisesEnCharge = new ArrayList<>();
 }
