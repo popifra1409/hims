@@ -1,5 +1,6 @@
 package co.iaf.entity.facturation;
 
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -25,6 +26,7 @@ import lombok.NoArgsConstructor;
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class PrestationRegistration {
 
+	@EmbeddedId
 	private PrestationRegistrationPk id = new PrestationRegistrationPk();
 	
 	private int quantite;

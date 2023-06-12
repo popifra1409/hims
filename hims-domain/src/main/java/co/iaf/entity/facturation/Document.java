@@ -9,6 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -41,11 +43,11 @@ public abstract class Document {
 			@Parameter(name = PatientNipGenerator.NUMBER_FORMAT_PARAMETER, value = "%06d"), })
 	@Column(name = "doc_ref")
 	private String docRef;
-	
+
 	private String intitule;
-	
-	//un document appartient à un patient
+
+	//un document appatient à un patient
+	@ManyToOne
+	@JoinColumn(name = "patient_id")
 	private Patient patient;
-	
-	//un document contient plusieurs enregistrement prestations
 }
