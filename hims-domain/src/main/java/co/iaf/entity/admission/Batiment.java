@@ -15,6 +15,7 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
+import co.iaf.entity.parametrage.ServiceAttache;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -36,6 +37,10 @@ public class Batiment {
 	private String description;
 
 	// un batiment peut contenir plusieurs chambres
-	@OneToMany(mappedBy = "batiment", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "batiment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Collection<Chambre> chambres = new ArrayList<>();
+
+	// un batiment peut abriter plusieurs services
+	@OneToMany(mappedBy = "batiment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private Collection<ServiceAttache> serviceAttache = new ArrayList<>();
 }

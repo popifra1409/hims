@@ -71,4 +71,9 @@ public class PrestationRegistration {
 	@MapsId("agentRealisateurId")
 	@JoinColumn(name = "agent_realisateur_id")
 	private AgentRealisateur agentRealisateur;
+	
+	@ManyToOne
+	@MapsId("prestationId")
+	@JoinColumn(name = "prestation_id")
+	private Prestation prestation;
 }

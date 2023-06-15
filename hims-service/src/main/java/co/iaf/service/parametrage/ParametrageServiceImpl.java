@@ -12,75 +12,67 @@ import co.iaf.dao.exceptions.ResourceNotFoundException;
 import co.iaf.dao.facturation.PrestationRepository;
 import co.iaf.dao.parametrage.DomaineRepository;
 import co.iaf.dao.parametrage.ServiceAttacheRepository;
+import co.iaf.dao.parametrage.ServiceDemandeurRepository;
+import co.iaf.dao.parametrage.ServiceRealisateurRepository;
 import co.iaf.dao.parametrage.TypeDomaineRepository;
-import co.iaf.entity.admission.Batiment;
 import co.iaf.entity.facturation.Prestation;
 import co.iaf.entity.parametrage.Domaine;
-import co.iaf.entity.parametrage.Services;
+import co.iaf.entity.parametrage.ServiceDemandeur;
+import co.iaf.entity.parametrage.ServiceRealisateur;
 import co.iaf.entity.parametrage.TypeDomaine;
 
 @Service
 @Transactional
 public class ParametrageServiceImpl implements ParametrageService {
 
-	private ServiceAttacheRepository serviceAttacheRepository;
-	private BatimentRepository batimentRepository;
-	private TypeDomaineRepository typeDomaineRepository;
-	private DomaineRepository domaineRepository;
-	private PrestationRepository prestationRepository;
+	private ServiceAttacheRepository serviceAttacheRepo;
+	private ServiceDemandeurRepository serviceDemandeurRepo;
+	private ServiceRealisateurRepository serviceRealisateurRepo;
+	private BatimentRepository batimentRepo;
+	private TypeDomaineRepository typeDomaineRepo;
+	private DomaineRepository domaineRepo;
+	private PrestationRepository prestationRepo;
 
-	public ParametrageServiceImpl(ServiceAttacheRepository serviceAttacheRepository, BatimentRepository batimentRepository,
-			TypeDomaineRepository typeDomaineRepository, DomaineRepository domaineRepository,
-			PrestationRepository prestationRepository) {
-		this.serviceAttacheRepository = serviceAttacheRepository;
-		this.batimentRepository = batimentRepository;
-		this.typeDomaineRepository = typeDomaineRepository;
-		this.domaineRepository = domaineRepository;
-		this.prestationRepository = prestationRepository;
+	public ParametrageServiceImpl(ServiceAttacheRepository serviceAttacheRepo,
+			ServiceDemandeurRepository serviceDemandeurRepo, ServiceRealisateurRepository serviceRealisateurRepo,
+			BatimentRepository batimentRepo, TypeDomaineRepository typeDomaineRepo, DomaineRepository domaineRepo,
+			PrestationRepository prestationRepo) {
+		super();
+		this.serviceAttacheRepo = serviceAttacheRepo;
+		this.serviceDemandeurRepo = serviceDemandeurRepo;
+		this.serviceRealisateurRepo = serviceRealisateurRepo;
+		this.batimentRepo = batimentRepo;
+		this.typeDomaineRepo = typeDomaineRepo;
+		this.domaineRepo = domaineRepo;
+		this.prestationRepo = prestationRepo;
 	}
 
-	/* ============ GESTION DES SERVICES ============= */
-
-	// créer d'un nouveau service
-	public Services addNewService(Services service, Long batimentId, Long typeDomaineId, Long serviceId) {
-		Batiment batiment = this.batimentRepository.findById(batimentId)
-				.orElseThrow(() -> new ResourceNotFoundException("Batiment:", "Batiment Id", batimentId));
-		TypeDomaine typeDomaine = this.typeDomaineRepository.findById(typeDomaineId)
-				.orElseThrow(() -> new ResourceNotFoundException("Type Domaine:", "Type Domaine Id", typeDomaineId));
-		Services serviceParent = this.serviceAttacheRepository.findById(serviceId)
-				.orElseThrow(() -> new ResourceNotFoundException("Service Parent:", "Service Id", serviceId));
-
-		/*
-		 * service.setBatiment(batiment); service.setTypeDomaine(typeDomaine);
-		 * service.setServiceParent(serviceParent);
-		 */
-
-		return this.serviceAttacheRepository.save(service);
-	}
-
-	// mis à jour d'un service
-	public Services updateService(Long serviceId, Services service) {
-		if (getServiceById(serviceId) != null) {
-			service.setId(serviceId);
-			return this.serviceAttacheRepository.save(service);
-		}
+	@Override
+	public ServiceDemandeur addNewServiceDemandeur(ServiceDemandeur demandeur, Long batimentId, Long typeDomaineId,
+			Long serviceId) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 
-	// suppression d'un service
-	public void deleteService(Long serviceId) {
-		this.serviceAttacheRepository.deleteById(serviceId);
+	@Override
+	public ServiceDemandeur getServiceDemandeurById(Long serviceId) {
+		ServiceDemandeur demandeur = this.serviceDemandeurRepo.findById(serviceId)
+				.orElseThrow(() -> new ResourceNotFoundException("Service Demandeur", "Service Demandeur Id", 0));
+		return demandeur;
 	}
 
-	// recupérer un service par son id
-	public Services getServiceById(Long serviceId) {
-		return this.serviceAttacheRepository.findById(serviceId)
-				.orElseThrow(() -> new ResourceNotFoundException("Service", "Service Id", serviceId));
+	@Override
+	public ServiceRealisateur addNewServiceRealisateur(ServiceRealisateur realisateur, Long batimentId,
+			Long typeDomaineId, Long serviceId) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
-	// recupérer tous les services
-	public List<Services> getAllServices() {
-		return this.serviceAttacheRepository.findAll();
+	@Override
+	public ServiceRealisateur getServiceRealisateurById(Long serviceId) {
+		ServiceRealisateur realisateur = this.serviceRealisateurRepo.findById(serviceId)
+				.orElseThrow(() -> new ResourceNotFoundException("Service Réalisateur", "Service Realisateur Id", 0));
+		return realisateur;
 	}
 
 	/* =======================GESTION DES DOMAINES============================ */
@@ -89,7 +81,7 @@ public class ParametrageServiceImpl implements ParametrageService {
 	public Domaine addNewDomaine(Domaine domaine, Long domaineParentId, Long typeDomaineId) {
 		// on recupère le type domaine auquel appartient le domaine
 		TypeDomaine typeDomaine = getTypeDomaineById(typeDomaineId);
-		//on recupère le domaine Parent s'il existe
+		// on recupère le domaine Parent s'il existe
 		Domaine domaineParent = getDomaineById(domaineParentId);
 		// on recupère les prestations associées au domaine
 		Collection<Prestation> prestations = domaine.getPrestations();
@@ -98,13 +90,13 @@ public class ParametrageServiceImpl implements ParametrageService {
 		domaine.setTypeDomaine(typeDomaine);
 		domaine.setDomaineParent(domaineParent);
 
-		Domaine newDomaine = this.domaineRepository.save(domaine);
+		Domaine newDomaine = this.domaineRepo.save(domaine);
 
 		if (prestations != null && !prestations.isEmpty()) {
 			for (Prestation prestation : prestations) {
 				prestation.setDomaine(newDomaine);
 			}
-			this.prestationRepository.saveAll(prestations); // Enregistrer tous les domaines en une seule fois
+			this.prestationRepo.saveAll(prestations); // Enregistrer tous les domaines en une seule fois
 		}
 
 		return newDomaine;
@@ -113,7 +105,7 @@ public class ParametrageServiceImpl implements ParametrageService {
 	// récupérer un domaine par son id
 	@Override
 	public Domaine getDomaineById(Long domaineId) {
-		Domaine domaine = this.domaineRepository.findById(domaineId)
+		Domaine domaine = this.domaineRepo.findById(domaineId)
 				.orElseThrow(() -> new ResourceNotFoundException("Domaine", "Domaine Id", 0));
 		return domaine;
 	}
@@ -121,13 +113,13 @@ public class ParametrageServiceImpl implements ParametrageService {
 	// recuperer tout les domaines
 	@Override
 	public List<Domaine> getAllDomaines() {
-		return this.domaineRepository.findAll();
+		return this.domaineRepo.findAll();
 	}
 
 	// supprimer un domaine
 	@Override
 	public void deleteDomaine(Domaine domaineId) {
-		this.domaineRepository.delete(domaineId);
+		this.domaineRepo.delete(domaineId);
 
 	}
 
@@ -141,7 +133,7 @@ public class ParametrageServiceImpl implements ParametrageService {
 		d.setLettreCle(domaine.getLettreCle());
 		d.setDomaineParent(domaine.getDomaineParent());
 
-		return this.domaineRepository.save(d);
+		return this.domaineRepo.save(d);
 	}
 
 	/*
@@ -153,13 +145,13 @@ public class ParametrageServiceImpl implements ParametrageService {
 	@Override
 	public TypeDomaine addNewTypeDomaine(TypeDomaine typeDomaine) {
 		Collection<Domaine> domaines = typeDomaine.getDomaines();
-		TypeDomaine newTypedomaine = this.typeDomaineRepository.save(typeDomaine);
+		TypeDomaine newTypedomaine = this.typeDomaineRepo.save(typeDomaine);
 
 		if (domaines != null && !domaines.isEmpty()) {
 			for (Domaine domaine : domaines) {
 				domaine.setTypeDomaine(newTypedomaine); // Définir le typeDomaine pour chaque domaine
 			}
-			this.domaineRepository.saveAll(domaines); // Enregistrer tous les domaines en une seule fois
+			this.domaineRepo.saveAll(domaines); // Enregistrer tous les domaines en une seule fois
 		}
 		return newTypedomaine;
 	}
@@ -167,7 +159,7 @@ public class ParametrageServiceImpl implements ParametrageService {
 	// recuperer un type domaine par son id
 	@Override
 	public TypeDomaine getTypeDomaineById(Long typeDomaineId) {
-		TypeDomaine typedomaine = this.typeDomaineRepository.findById(typeDomaineId)
+		TypeDomaine typedomaine = this.typeDomaineRepo.findById(typeDomaineId)
 				.orElseThrow(() -> new ResourceNotFoundException("Type Domaine:", "TypeDomaine Id", 0));
 		return typedomaine;
 	}
@@ -175,13 +167,13 @@ public class ParametrageServiceImpl implements ParametrageService {
 	// recuperer tout les types domaines
 	@Override
 	public List<TypeDomaine> getAllTypeDomaines() {
-		return this.typeDomaineRepository.findAll();
+		return this.typeDomaineRepo.findAll();
 	}
 
 	// supprimer un type domaine
 	@Override
 	public void deleteTypeDomaine(TypeDomaine typeDomaineId) {
-		this.typeDomaineRepository.delete(typeDomaineId);
+		this.typeDomaineRepo.delete(typeDomaineId);
 
 	}
 
@@ -192,6 +184,7 @@ public class ParametrageServiceImpl implements ParametrageService {
 		td.setCodeType(typeDomaine.getCodeType());
 		td.setLibelleType(typeDomaine.getLibelleType());
 
-		return this.typeDomaineRepository.save(td);
+		return this.typeDomaineRepo.save(td);
 	}
+
 }

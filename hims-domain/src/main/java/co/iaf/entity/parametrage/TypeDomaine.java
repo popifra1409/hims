@@ -14,6 +14,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import lombok.AllArgsConstructor;
@@ -31,13 +32,17 @@ public class TypeDomaine {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
+
 	@Column(name = "code_type")
 	private String codeType;
-	
+
 	@Column(name = "libelle_type")
 	private String libelleType;
 
-	@OneToMany(mappedBy = "typeDomaine", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "typeDomaine", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Collection<Domaine> domaines = new ArrayList<>();
+
+	@OneToMany(mappedBy = "typeDomaine", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JsonIgnore
+	private Collection<ServiceAttache> servicesAttache = new ArrayList<>();
 }

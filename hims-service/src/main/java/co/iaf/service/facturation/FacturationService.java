@@ -2,6 +2,7 @@ package co.iaf.service.facturation;
 
 import java.util.List;
 
+import co.iaf.entity.facturation.Facture;
 import co.iaf.entity.facturation.Imputation;
 import co.iaf.entity.facturation.Prestation;
 
@@ -25,11 +26,10 @@ public interface FacturationService {
 
 	// lister toutes les prestations d'un domaine
 	public List<Prestation> getPrestationsByDomaine(Long domaineId);
-	
+
 	// lister toutes les prestations d'une imputation
 	public List<Prestation> getPrestationsByImputation(Long imputationId);
-	
-	
+
 	/* ============ GESTION DES IMPUTATIONS =============== */
 
 	public Imputation addNewImputation(Imputation imputation);
@@ -43,5 +43,10 @@ public interface FacturationService {
 
 	// suppression d'une imputation
 	public void deleteImputation(Imputation imputationId);
+
+	/* ============ GESTION DES FACTURES =============== */
+
+	// création d'une facture
+	public Facture addNewFacture(Facture facture, String patientId);
 
 }

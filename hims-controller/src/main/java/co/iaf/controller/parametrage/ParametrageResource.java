@@ -35,72 +35,48 @@ public class ParametrageResource {
 		this.parametrageService = parametrageService;
 	}
 
-	// liste des services
-	@GetMapping(path = "/services/all")
-	public ResponseEntity<?> listBatiments() {
-		Map<String, Object> map = new LinkedHashMap<String, Object>();
-		List<Services> listservices = parametrageService.getAllServices();
-		if (!listservices.isEmpty()) {
-			map.put("status", 1);
-			map.put("data", listservices);
-			return new ResponseEntity<>(map, HttpStatus.OK);
-		} else {
-			map.clear();
-			map.put("status", 0);
-			map.put("message", "Aucune information trouvée");
-			return new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
-		}
-	}
-
-	// ajouter un service
-	@PostMapping(path = "/services/{batimentId}/{typeDomaineId}/{serviceId}")
-	public ResponseEntity<?> saveService(@PathVariable(name = "batimentId") Long batimentId,
-			@PathVariable(name = "typeDomaineId") Long typeDomaineId, @PathVariable(name = "serviceId") Long serviceId,
-			@RequestBody Services service) {
-		Map<String, Object> map = new LinkedHashMap<String, Object>();
-		parametrageService.addNewService(service, batimentId, typeDomaineId, serviceId);
-		map.put("status", 1);
-		map.put("data", new ApiResponse("Service créé avec succès !", true));
-		return new ResponseEntity<>(map, HttpStatus.CREATED);
-	}
-
-	// recupérer un service par son id
-	@GetMapping(path = "/services/{id}")
-	public ResponseEntity<?> getServiceById(@PathVariable(name = "id") Long serviceId) {
-		Map<String, Object> map = new LinkedHashMap<String, Object>();
-		try {
-			Services service = parametrageService.getServiceById(serviceId);
-			map.put("status", 1);
-			map.put("data", service);
-			return new ResponseEntity<>(map, HttpStatus.OK);
-		} catch (Exception ex) {
-			map.clear();
-			map.put("status", 0);
-			map.put("message", new ApiResponse("Aucun service trouvé", false));
-			return new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
-		}
-	}
+	/*
+	 * // liste des services
+	 * 
+	 * @GetMapping(path = "/services/all") public ResponseEntity<?> listBatiments()
+	 * { Map<String, Object> map = new LinkedHashMap<String, Object>();
+	 * List<Services> listservices = parametrageService.getAllServices(); if
+	 * (!listservices.isEmpty()) { map.put("status", 1); map.put("data",
+	 * listservices); return new ResponseEntity<>(map, HttpStatus.OK); } else {
+	 * map.clear(); map.put("status", 0); map.put("message",
+	 * "Aucune information trouvée"); return new ResponseEntity<>(map,
+	 * HttpStatus.NOT_FOUND); } }
+	 * 
+	 * // ajouter un service
+	 * 
+	 * @PostMapping(path = "/services/{batimentId}/{typeDomaineId}/{serviceId}")
+	 * public ResponseEntity<?> saveService(@PathVariable(name = "batimentId") Long
+	 * batimentId,
+	 * 
+	 * @PathVariable(name = "typeDomaineId") Long typeDomaineId, @PathVariable(name
+	 * = "serviceId") Long serviceId,
+	 * 
+	 * @RequestBody Services service) { Map<String, Object> map = new
+	 * LinkedHashMap<String, Object>(); parametrageService.addNewService(service,
+	 * batimentId, typeDomaineId, serviceId); map.put("status", 1); map.put("data",
+	 * new ApiResponse("Service créé avec succès !", true)); return new
+	 * ResponseEntity<>(map, HttpStatus.CREATED); }
+	 * 
+	 * // recupérer un service par son id
+	 * 
+	 * @GetMapping(path = "/services/{id}") public ResponseEntity<?>
+	 * getServiceById(@PathVariable(name = "id") Long serviceId) { Map<String,
+	 * Object> map = new LinkedHashMap<String, Object>(); try { Services service =
+	 * parametrageService.getServiceById(serviceId); map.put("status", 1);
+	 * map.put("data", service); return new ResponseEntity<>(map, HttpStatus.OK); }
+	 * catch (Exception ex) { map.clear(); map.put("status", 0); map.put("message",
+	 * new ApiResponse("Aucun service trouvé", false)); return new
+	 * ResponseEntity<>(map, HttpStatus.NOT_FOUND); } }
+	 */
 
 	/*
 	 * ==================GESTION DES DOMAINES======================================
 	 */
-
-	// mettre à jour les infos du domaine
-	@PutMapping("/services/update/{id}")
-	public ResponseEntity<?> updateService(@PathVariable(name = "id") Long serviceId, @RequestBody Services service) {
-		Map<String, Object> map = new LinkedHashMap<String, Object>();
-		try {
-			Services serviceUpdate = parametrageService.updateService(serviceId, service);
-			map.put("status", 1);
-			map.put("data", serviceUpdate);
-			return new ResponseEntity<>(map, HttpStatus.OK);
-		} catch (Exception ex) {
-			map.clear();
-			map.put("status", 0);
-			map.put("message", new ApiResponse("Aucune information Trouvée !", false));
-			return new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
-		}
-	}
 
 	// ajouter un nouveau Domaine
 

@@ -21,4 +21,5 @@ public class PrestationRegistrationPk implements Serializable {
 	private Long serviceRealisateurId;
 	private Long agentPrescripteurId;
 	private Long agentRealisateurId;
+	private Long prestationId;
 }

@@ -27,6 +27,7 @@ import co.iaf.entity.admission.PriseParametreSoin;
 import co.iaf.entity.admission.Sejour;
 import co.iaf.entity.admission.TransfertHospit;
 import co.iaf.entity.identification.Patient;
+import co.iaf.entity.parametrage.ServiceAttache;
 import co.iaf.service.identification.IdentificationService;
 import co.iaf.service.parametrage.ParametrageService;
 
@@ -68,13 +69,21 @@ public class AdmissionServiceImpl implements AdmissionService {
 	// créer d'un nouveau batiment
 	public Batiment addNewBatiment(Batiment batiment) {
 		Collection<Chambre> chambres = batiment.getChambres();
+		Collection<ServiceAttache> services = batiment.getServiceAttache();
+
 		Batiment newBatiment = this.batimentRepository.save(batiment);
 		// s'il existe des chambres associées
 		if (chambres != null && !chambres.isEmpty()) {
-			chambres.forEach(cham -> {
-				this.chambreRepository.save(new Chambre(null, cham.getLibelle(), cham.getDescription(),
-						cham.getPrixChambre(), newBatiment, null));
-			});
+			for (Chambre chambre : chambres) {
+				chambre.setBatiment(newBatiment);
+			}
+			this.chambreRepository.saveAll(chambres);
+		}
+
+		if (services != null && !services.isEmpty()) {
+			for (ServiceAttache service : services) {
+				service.setBatiment(newBatiment);
+			}
 		}
 		return newBatiment;
 	}
@@ -306,23 +315,20 @@ public class AdmissionServiceImpl implements AdmissionService {
 	@Override
 	public Hospitalisation addNewHospit(Hospitalisation hospit, Long sejourId, Long serviceId, String patientId,
 			Long litId) {
-		// récupération du séjour concerné
-		Sejour sejour = getSejourById(sejourId);
-		// récupération du service concerné
-		co.iaf.entity.parametrage.Services serviceAccueil = parametrageService.getServiceById(serviceId);
-		// récupération du patient concerné
-		Patient patient = identificationService.getPatientById(patientId);
-		// récupération du lit concerné
-		Lit lit = getLitById(litId);
-
-		// si le séjour, le service, le patient, le lit existent
-		if (sejour != null && serviceAccueil != null && patient != null && lit != null) {
-			hospit.setSejour(sejour);
-			hospit.setPatient(patient);
-			hospit.setServiceAccueil(serviceAccueil);
-			hospit.setLit(lit);
-			return hospitalisationRepository.save(hospit);
-		}
+		/*
+		 * // récupération du séjour concerné Sejour sejour = getSejourById(sejourId);
+		 * // récupération du service concerné co.iaf.entity.parametrage.Services
+		 * serviceAccueil = parametrageService.getServiceById(serviceId); //
+		 * récupération du patient concerné Patient patient =
+		 * identificationService.getPatientById(patientId); // récupération du lit
+		 * concerné Lit lit = getLitById(litId);
+		 * 
+		 * // si le séjour, le service, le patient, le lit existent if (sejour != null
+		 * && serviceAccueil != null && patient != null && lit != null) {
+		 * hospit.setSejour(sejour); hospit.setPatient(patient);
+		 * hospit.setServiceAccueil(serviceAccueil); hospit.setLit(lit); return
+		 * hospitalisationRepository.save(hospit); }
+		 */
 		return null;
 	}
 
@@ -397,21 +403,18 @@ public class AdmissionServiceImpl implements AdmissionService {
 
 	@Override
 	public Hospitalisation sendAvisHospit(Hospitalisation hospit, Long sejourId, Long serviceId, String patientId) {
-		// récupération du séjour concerné
-		Sejour sejour = getSejourById(sejourId);
-		// récupération du service concerné
-		co.iaf.entity.parametrage.Services serviceAccueil = parametrageService.getServiceById(serviceId);
-		// récupération du patient concerné
-		Patient patient = identificationService.getPatientById(patientId);
-
-		// si le bâtiment existe
-		if (sejour != null && serviceAccueil != null && patient != null) {
-			hospit.setSejour(sejour);
-			hospit.setPatient(patient);
-			hospit.setServiceAccueil(serviceAccueil);
-			hospit.setAvisHospit(true);
-			return hospitalisationRepository.save(hospit);
-		}
+		/*
+		 * // récupération du séjour concerné Sejour sejour = getSejourById(sejourId);
+		 * // récupération du service concerné co.iaf.entity.parametrage.Services
+		 * serviceAccueil = parametrageService.getServiceById(serviceId); //
+		 * récupération du patient concerné Patient patient =
+		 * identificationService.getPatientById(patientId);
+		 * 
+		 * // si le bâtiment existe if (sejour != null && serviceAccueil != null &&
+		 * patient != null) { hospit.setSejour(sejour); hospit.setPatient(patient);
+		 * hospit.setServiceAccueil(serviceAccueil); hospit.setAvisHospit(true); return
+		 * hospitalisationRepository.save(hospit); }
+		 */
 		return null;
 	}
 
@@ -443,15 +446,16 @@ public class AdmissionServiceImpl implements AdmissionService {
 
 	@Override
 	public Hospitalisation transfertHospit(TransfertHospit transfert, Long hospitId, Long serviceId) {
-		Hospitalisation hospitalisation = hospitalisationRepository.findById(hospitId)
-				.orElseThrow(() -> new ResourceNotFoundException("Hospitalisation", "Hospitalisation Id", 0));
-		co.iaf.entity.parametrage.Services service = parametrageService.getServiceById(serviceId);
-		if (hospitalisation != null && service != null) {
-			transfert.setHospit(hospitalisation);
-			transfert.setService(service);
-			transfertRespository.save(transfert);
-			return hospitalisation;
-		}
+		/*
+		 * Hospitalisation hospitalisation =
+		 * hospitalisationRepository.findById(hospitId) .orElseThrow(() -> new
+		 * ResourceNotFoundException("Hospitalisation", "Hospitalisation Id", 0));
+		 * co.iaf.entity.parametrage.Services service =
+		 * parametrageService.getServiceById(serviceId); if (hospitalisation != null &&
+		 * service != null) { transfert.setHospit(hospitalisation);
+		 * transfert.setService(service); transfertRespository.save(transfert); return
+		 * hospitalisation; }
+		 */
 		return null;
 	}
 

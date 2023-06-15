@@ -2,6 +2,7 @@ package co.iaf.service.facturation;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -9,12 +10,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import co.iaf.dao.exceptions.ResourceNotFoundException;
+import co.iaf.dao.facturation.FactureRepository;
 import co.iaf.dao.facturation.ImputationRepository;
 import co.iaf.dao.facturation.PrestationRepository;
-import co.iaf.dao.parametrage.DomaineRepository;
+import co.iaf.entity.facturation.Facture;
 import co.iaf.entity.facturation.Imputation;
 import co.iaf.entity.facturation.Prestation;
+import co.iaf.entity.facturation.PrestationRegistration;
+import co.iaf.entity.grh.AgentPrescripteur;
+import co.iaf.entity.grh.AgentRealisateur;
+import co.iaf.entity.identification.Patient;
 import co.iaf.entity.parametrage.Domaine;
+import co.iaf.entity.parametrage.ServiceDemandeur;
+import co.iaf.entity.parametrage.ServiceRealisateur;
+import co.iaf.service.grh.AgentService;
+import co.iaf.service.identification.IdentificationService;
 import co.iaf.service.parametrage.ParametrageService;
 
 @Service
@@ -23,13 +33,20 @@ public class FacturationServicelmpl implements FacturationService {
 
 	private PrestationRepository prestationRepo;
 	private ImputationRepository imputationRepo;
+	private FactureRepository factureRepo;
 
 	@Autowired
 	private ParametrageService parametrageService;
+	@Autowired
+	private IdentificationService identificationService;
+	@Autowired
+	private AgentService agentService;
 
-	public FacturationServicelmpl(PrestationRepository prestationRepo, ImputationRepository imputationRepo) {
+	public FacturationServicelmpl(PrestationRepository prestationRepo, ImputationRepository imputationRepo,
+			FactureRepository factureRepo) {
 		this.prestationRepo = prestationRepo;
 		this.imputationRepo = imputationRepo;
+		this.factureRepo = factureRepo;
 	}
 
 	@Override
@@ -141,6 +158,43 @@ public class FacturationServicelmpl implements FacturationService {
 	public void deleteImputation(Imputation imputationId) {
 		this.imputationRepo.delete(imputationId);
 
+	}
+
+	@Override
+	public Facture addNewFacture(Facture facture, String patientId) {
+		Patient patient = identificationService.getPatientById(patientId);
+		Collection<PrestationRegistration> prestationRegistrations = facture.getPrestationRegistration();
+
+		Facture newFacture = new Facture();
+		newFacture.setIntitule(facture.getIntitule());
+		newFacture.setPatient(patient);
+
+		newFacture.getPrestationRegistration().addAll(prestationRegistrations.stream().map(prestationReg -> {
+			Prestation prestation = getPrestationById(prestationReg.getPrestation().getId());
+			AgentPrescripteur agentPrescripteur = agentService
+					.getPrescripteurById(prestationReg.getAgentPrescripteur().getId());
+			AgentRealisateur agentRealisateur = agentService
+					.getRealisateurById(prestationReg.getAgentRealisateur().getId());
+			ServiceDemandeur demandeur = parametrageService
+					.getServiceDemandeurById(prestationReg.getServiceDemandeur().getId());
+			ServiceRealisateur realisateur = parametrageService
+					.getServiceRealisateurById(prestationReg.getServiceRealisateur().getId());
+
+			PrestationRegistration newPrestationRegistration = new PrestationRegistration();
+			newPrestationRegistration.setPrestation(prestation);
+			newPrestationRegistration.setAgentPrescripteur(agentPrescripteur);
+			newPrestationRegistration.setAgentRealisateur(agentRealisateur);
+			newPrestationRegistration.setServiceDemandeur(demandeur);
+			newPrestationRegistration.setServiceRealisateur(realisateur);
+			newPrestationRegistration.setQuantite(prestationReg.getQuantite());
+			newPrestationRegistration.setTicketModerateur(prestationReg.getTicketModerateur());
+			newPrestationRegistration.setTarif(prestationReg.getTarif());
+			newPrestationRegistration.setTva(prestationReg.getTva());
+
+			return newPrestationRegistration;
+		}).collect(Collectors.toList()));
+
+		return this.factureRepo.save(newFacture);
 	}
 
 }

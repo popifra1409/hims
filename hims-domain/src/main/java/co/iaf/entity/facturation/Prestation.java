@@ -16,6 +16,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import co.iaf.entity.parametrage.Domaine;
@@ -113,6 +114,12 @@ public class Prestation {
 
 	// une prestation peut être prise en charge plusieurs fois
 	@OneToMany(mappedBy = "prestation", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JsonIgnore
 	private Collection<PriseEnCharge> prisesEnCharge = new ArrayList<>();
+
+	// une prestation peut être facturé plusieurs fois
+	@OneToMany(mappedBy = "prestation", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JsonIgnore
+	private Collection<PrestationRegistration> prestationRegistrations = new ArrayList<>();
 
 }
