@@ -10,10 +10,8 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
-import co.iaf.entity.grh.AgentPrescripteur;
-import co.iaf.entity.grh.AgentRealisateur;
-import co.iaf.entity.parametrage.ServiceDemandeur;
-import co.iaf.entity.parametrage.ServiceRealisateur;
+import co.iaf.entity.grh.Agent;
+import co.iaf.entity.parametrage.Services;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,50 +26,30 @@ public class PrestationRegistration {
 
 	@EmbeddedId
 	private PrestationRegistrationPk id = new PrestationRegistrationPk();
-	
+
 	private int quantite;
-	
+
 	private double ticketModerateur;
-	
+
 	private double tarif;
-	
+
 	private double tva;
-	
-	@ManyToOne
-	@MapsId("numFacture")
-	@JoinColumn(name = "numero_facture")
-	private Facture facture;
 
 	@ManyToOne
-	@MapsId("numPrefacture")
-	@JoinColumn(name = "numero_prefacture")
-	private Prefacture prefacture;
-	
+	@MapsId("numDoc")
+	@JoinColumn(name = "numero_document")
+	private Document document;
+
 	@ManyToOne
-	@MapsId("numDevis")
-	@JoinColumn(name = "numero_devis")
-	private Devis devis;
-	
+	@MapsId("serviceId")
+	@JoinColumn(name = "service_id")
+	private Services service;
+
 	@ManyToOne
-	@MapsId("serviceDemandeurId")
-	@JoinColumn(name = "service_demandeur_id")
-	private ServiceDemandeur serviceDemandeur;
-	
-	@ManyToOne
-	@MapsId("serviceRealisateurId")
-	@JoinColumn(name = "service_realisateur_id")
-	private ServiceRealisateur serviceRealisateur;
-	
-	@ManyToOne
-	@MapsId("agentPrescripteurId")
-	@JoinColumn(name = "agent_prescripteur_id")
-	private AgentPrescripteur agentPrescripteur;
-	
-	@ManyToOne
-	@MapsId("agentRealisateurId")
-	@JoinColumn(name = "agent_realisateur_id")
-	private AgentRealisateur agentRealisateur;
-	
+	@MapsId("agentId")
+	@JoinColumn(name = "agent_id")
+	private Agent agent;
+
 	@ManyToOne
 	@MapsId("prestationId")
 	@JoinColumn(name = "prestation_id")

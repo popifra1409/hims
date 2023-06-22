@@ -49,4 +49,7 @@ public interface FacturationService {
 	// création d'une facture
 	public Facture addNewFacture(Facture facture, String patientId);
 
+	// recupérer unr facture par son Id
+	public Facture getFactureById(String factureId);
+
 }

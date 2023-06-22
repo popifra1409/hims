@@ -4,6 +4,6 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 @Entity
-@DiscriminatorValue("prescripteur")
-public class AgentPrescripteur extends Agent {
+@DiscriminatorValue("caissier")
+public class Caissier extends Agent {
 }

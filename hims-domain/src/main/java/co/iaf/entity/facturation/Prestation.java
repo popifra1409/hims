@@ -98,7 +98,6 @@ public class Prestation {
 	private boolean isProduitpharmacie;
 
 	// une prestation appartient à un domaine
-
 	@ManyToOne
 	@JoinColumn(name = "domaine_prestation_id")
 	private Domaine domaine;

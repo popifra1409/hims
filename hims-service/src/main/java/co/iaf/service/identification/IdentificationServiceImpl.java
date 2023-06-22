@@ -165,6 +165,14 @@ public class IdentificationServiceImpl implements IdentificationService {
 	}
 
 	@Override
+	public void addInfosSupToPatient(String patientId, Collection<InfosSup> infosSup) {
+		Patient patient = getPatientById(patientId);
+		infosSup.forEach(infoSup -> infoSup.setPatient(patient));
+
+		this.infoSupRepo.saveAll(infosSup);
+	}
+
+	@Override
 	public InfosSup updateInfosSup(Long infoId, InfosSup info) {
 		if (getInfosSupById(infoId) != null) {
 			info.setId(infoId);
@@ -275,6 +283,10 @@ public class IdentificationServiceImpl implements IdentificationService {
 		// Fusionner les informations supplémentaires
 		patientPrincipal.getInfosSup().addAll(patientDoublon.getInfosSup());
 		Patient patientFusion = addNewPatient(patientPrincipal);
+
+		// fusion des parametres de soins
+
+		// fusion des documents
 
 		// Supprimer le patient doublon
 		// on supprime d'abord le Qrcode du patient en doublon

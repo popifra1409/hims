@@ -21,11 +21,13 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import co.iaf.entity.enums.Sexe;
 import co.iaf.entity.enums.TypeAgent;
-import co.iaf.entity.parametrage.ServiceAttache;
+import co.iaf.entity.facturation.Reglement;
+import co.iaf.entity.parametrage.Services;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -76,14 +78,23 @@ public abstract class Agent {
 
 	private TypeAgent typeAgent;
 
+	@ManyToOne
+	@JoinColumn(name = "superieur_hierarchique")
+	private Agent superieur;
+
 	// Un agent peut avoir plusieurs informations supplémentaires
-	@OneToMany(mappedBy = "agent", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "agent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Collection<AgentInfosSup> agentInfosSup = new ArrayList<>();
 
 	// un agent est attaché à un service
 	@ManyToOne
-	@JoinColumn(name = "service_attache_id")
-	private ServiceAttache serviceAttache;
+	@JoinColumn(name = "service_id")
+	private Services service;
+
+	// Un agent peut enregistrer plusieurs règlements
+	@OneToMany(mappedBy = "agent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JsonIgnore
+	private Collection<Reglement> reglements = new ArrayList<>();
 
 	// un agent peut effectuer une ou plusieurs interventions
 	/*

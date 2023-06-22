@@ -182,6 +182,26 @@ public class IdentificationResource {
 	 * ===================gestion des infos supplémentaires du patient
 	 * ==========================
 	 */
+	//
+	@PostMapping(path = "/infossup/saveall/{patientId}")
+	public ResponseEntity<?> saveAllInfosSup(@PathVariable String patientId,
+			@RequestBody Collection<InfosSup> infosSup) {
+		Map<String, Object> map = new LinkedHashMap<String, Object>();
+		try {
+			identificationService.addInfosSupToPatient(patientId, infosSup);
+			map.put("status", 1);
+			map.put("message", new ApiResponse("Infos supplémentaire créé avec succès !", true));
+			return new ResponseEntity<>(map, HttpStatus.OK);
+		} catch (Exception e) {
+			map.clear();
+			map.put("status", 0);
+			map.put("message", new ApiResponse(
+					"Une erreur s'est produite lors de l'insertion des informations supplémentaires du patients.",
+					false));
+			return new ResponseEntity<>(map, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
 	// ajouter une info supplémentaire (Test OK)
 	@PostMapping(path = "/infossup/save/{patientId}")
 	public ResponseEntity<?> saveInfosSup(@RequestBody InfosSup info, @PathVariable String patientId) {
@@ -278,8 +298,8 @@ public class IdentificationResource {
 			return new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
 		}
 	}
-	
-	//créer un nouveau groupe de patient
+
+	// créer un nouveau groupe de patient
 	@PostMapping(path = "/groupepatients/save")
 	public ResponseEntity<?> saveGroupePatient(@RequestBody GroupePatient groupePatient) {
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
@@ -288,4 +308,5 @@ public class IdentificationResource {
 		map.put("message", new ApiResponse("Groupe Patient créé avec succès !", true));
 		return new ResponseEntity<>(map, HttpStatus.CREATED);
 	}
+
 }

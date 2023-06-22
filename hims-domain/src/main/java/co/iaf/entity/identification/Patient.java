@@ -2,6 +2,7 @@ package co.iaf.entity.identification;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -27,6 +28,7 @@ import co.iaf.entity.enums.Sexe;
 import co.iaf.entity.facturation.Devis;
 import co.iaf.entity.facturation.Facture;
 import co.iaf.entity.facturation.Prefacture;
+import co.iaf.entity.facturation.Reglement;
 import co.iaf.entity.generator.PatientNipGenerator;
 import co.iaf.entity.pec.PriseEnCharge;
 import lombok.AllArgsConstructor;
@@ -60,7 +62,7 @@ public class Patient {
 	private String patientFirstName;
 
 	@Column(name = "date_naissance", nullable = false)
-	private String patientBirthDay;
+	private Date patientBirthDay;
 
 	@Column(name = "lieu_naissance")
 	private String patientPlaceOfBirth;
@@ -128,4 +130,9 @@ public class Patient {
 	@OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JsonIgnore
 	private Collection<PriseEnCharge> prisesEnCharge = new ArrayList<>();
+
+	// un patient peut avoir plusieurs reglements de facture
+	@OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JsonIgnore
+	private Collection<Reglement> reglements = new ArrayList<>();
 }

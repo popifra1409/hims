@@ -14,12 +14,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PrestationRegistrationPk implements Serializable {
 
-	private String numFacture;
-	private String numPrefacture;
-	private String numDevis;
-	private Long serviceDemandeurId;
-	private Long serviceRealisateurId;
-	private Long agentPrescripteurId;
-	private Long agentRealisateurId;
+	private String numDoc;
+	private Long serviceId;
+	private Long agentId;
 	private Long prestationId;
 }

@@ -171,21 +171,18 @@ public class FacturationServicelmpl implements FacturationService {
 
 		newFacture.getPrestationRegistration().addAll(prestationRegistrations.stream().map(prestationReg -> {
 			Prestation prestation = getPrestationById(prestationReg.getPrestation().getId());
-			AgentPrescripteur agentPrescripteur = agentService
-					.getPrescripteurById(prestationReg.getAgentPrescripteur().getId());
-			AgentRealisateur agentRealisateur = agentService
-					.getRealisateurById(prestationReg.getAgentRealisateur().getId());
-			ServiceDemandeur demandeur = parametrageService
-					.getServiceDemandeurById(prestationReg.getServiceDemandeur().getId());
+			AgentPrescripteur agentPrescripteur = agentService.getPrescripteurById(prestationReg.getAgent().getId());
+			AgentRealisateur agentRealisateur = agentService.getRealisateurById(prestationReg.getAgent().getId());
+			ServiceDemandeur demandeur = parametrageService.getServiceDemandeurById(prestationReg.getService().getId());
 			ServiceRealisateur realisateur = parametrageService
-					.getServiceRealisateurById(prestationReg.getServiceRealisateur().getId());
+					.getServiceRealisateurById(prestationReg.getService().getId());
 
 			PrestationRegistration newPrestationRegistration = new PrestationRegistration();
 			newPrestationRegistration.setPrestation(prestation);
-			newPrestationRegistration.setAgentPrescripteur(agentPrescripteur);
-			newPrestationRegistration.setAgentRealisateur(agentRealisateur);
-			newPrestationRegistration.setServiceDemandeur(demandeur);
-			newPrestationRegistration.setServiceRealisateur(realisateur);
+			newPrestationRegistration.setAgent(agentPrescripteur);
+			newPrestationRegistration.setAgent(agentRealisateur);
+			newPrestationRegistration.setService(demandeur);
+			newPrestationRegistration.setService(realisateur);
 			newPrestationRegistration.setQuantite(prestationReg.getQuantite());
 			newPrestationRegistration.setTicketModerateur(prestationReg.getTicketModerateur());
 			newPrestationRegistration.setTarif(prestationReg.getTarif());
@@ -195,6 +192,13 @@ public class FacturationServicelmpl implements FacturationService {
 		}).collect(Collectors.toList()));
 
 		return this.factureRepo.save(newFacture);
+	}
+
+	@Override
+	public Facture getFactureById(String factureId) {
+		Facture facture = this.factureRepo.findById(factureId)
+				.orElseThrow(() -> new ResourceNotFoundException("Facture", "Facture Id", 0));
+		return facture;
 	}
 
 }

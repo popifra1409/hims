@@ -1,9 +1,14 @@
 package co.iaf.entity.parametrage;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -11,12 +16,15 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import co.iaf.entity.admission.Batiment;
+import co.iaf.entity.facturation.PrestationRegistration;
+import co.iaf.entity.grh.Agent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -55,4 +63,11 @@ public abstract class Services {
 	@JoinColumn(name = "batiment_id")
 	private Batiment batiment;
 
+	// un service peut avoir plusieurs agents
+	@OneToMany(mappedBy = "service", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private Collection<Agent> agents = new ArrayList<>();
+
+	// un service peut avoir plusieurs enregistrements de prestations
+	@OneToMany(mappedBy = "service", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private Collection<PrestationRegistration> prestationsRegistration = new ArrayList<>();
 }

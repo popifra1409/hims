@@ -2,12 +2,13 @@ package co.iaf.service.grh;
 
 import co.iaf.entity.grh.AgentPrescripteur;
 import co.iaf.entity.grh.AgentRealisateur;
+import co.iaf.entity.grh.Caissier;
 
 public interface AgentService {
 
 	// ========= GESTION DES PRESCRIPTEURS =======/
 	// créer un nouveau prescripteur
-	public AgentPrescripteur addNewPrescripteur(AgentPrescripteur prescripteur);
+	public AgentPrescripteur addNewPrescripteur(AgentPrescripteur prescripteur, Long superieurId);
 
 	// recuperer un prescripteur par son Id
 	public AgentPrescripteur getPrescripteurById(Long agentId);
@@ -20,7 +21,7 @@ public interface AgentService {
 
 	// ========= GESTION DES REALISATEURS =======/
 	// créer un nouveau realisateur
-	public AgentRealisateur addNewRealisateur(AgentRealisateur realisateur);
+	public AgentRealisateur addNewRealisateur(AgentRealisateur realisateur, Long superieurId);
 
 	// recuperer un realisateur par son Id
 	public AgentRealisateur getRealisateurById(Long agentId);
@@ -30,5 +31,12 @@ public interface AgentService {
 
 	// supprimer un prescripteur
 	public void deleteRealisateur(AgentRealisateur realisateur);
+
+	// ========= GESTION DES CAISSIERS =======/
+	// crer un nouveau caissier
+	public Caissier addNewCaissier(Caissier caisse, Long superieurId);
+
+	// recuperer un ciassier par son Id
+	public Caissier getCaissierById(Long caissierId);
 
 }

@@ -2,6 +2,7 @@ package co.iaf.service.identification;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import co.iaf.entity.admission.PriseParametreSoin;
 import co.iaf.entity.identification.GroupePatient;
@@ -51,8 +52,11 @@ public interface IdentificationService {
 	public QrCodePatient getQrCodeByPatient(Patient patient);
 
 	/* ============ Gestion des infos supplementaires du patient ============= */
-	// ajouter un info supplementaire au patient
+	// ajouter une info supplementaire au patient
 	public InfosSup addNewInfoToPatient(InfosSup info, String patientId);
+
+	// ajouter une liste d'informations supplémentaires au patient
+	public void addInfosSupToPatient(String patientId, Collection<InfosSup> infosSup);
 
 	// recupérer une info supplémentaire par son id
 	public InfosSup getInfosSupById(Long infosSupId);
